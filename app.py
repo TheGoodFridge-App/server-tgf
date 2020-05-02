@@ -1,6 +1,8 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 import pyrebase
 import json
+import firebase_admin
+from firebase_admin import credentials, firestore
 
 app = Flask(__name__)
 
@@ -18,6 +20,11 @@ config = {
 firebase = pyrebase.initialize_app(config)
 
 auth = firebase.auth()
+
+cred = credentials.Certificate('./serviceAccountKey.json')
+default_app = firebase_admin.initialize_app(cred)
+
+db = firestore.client()
 
 @app.route("/")
 def index():
@@ -50,8 +57,67 @@ def register():
     except Exception as e:
         response = e.args[0].response
         error = response.json()['error']
-        return error
+        return error, 400
         # return str(e)#"Account already taken. Please sign in", 400
+
+@app.route('/api/values', methods=['GET', 'POST', 'PUT'])
+def post_values():
+    email = request.args.get('email')
+    value1 = "True" == request.args.get('value1')
+    value2 = "True" == request.args.get('value2')
+    value3 = "True" == request.args.get('value3')
+
+    try:
+        ref = db.collection(u'users').document(str(email))
+        ref.set({
+            u'value1': value1,
+            u'value2': value2,
+            u'value3': value3,
+        })
+        return 'Sucess', 200
+
+    except Exception as e:
+        ret = 'Failed with error: ' + str(e)
+        return ret, 400
+
+@app.route('/api/values/update', methods=['POST', 'PUT'])
+def update_values():
+    email = request.args.get('email')
+    value1 = "True" == request.args.get('value1')
+    value2 = "True" == request.args.get('value2')
+    value3 = "True" == request.args.get('value3')
+
+    try:
+        ref = db.collection(u'users').document(str(email))
+        ref.update({
+            u'value1': value1,
+            u'value2': value2,
+            u'value3': value3,
+        })
+        return 'Sucess', 200
+
+    except Exception as e:
+        ret = 'Failed with error: ' + str(e)
+        return ret, 400
+
+@app.route('/data', methods=['GET'])
+def get_data():
+    email = request.args.get('email')
+
+    try:
+        ref = db.collection(u'users').document(str(email))
+        data = ref.get()
+
+        return jsonify(data.to_dict()), 200
+
+    except Exception as e:
+        ret = 'Failed with error: ' + str(e)
+        return ret, 400
+
+
+
+#suggestions (get the product, get the data from sentiment)
+
 
 if __name__ == '__main__':
     app.run()
