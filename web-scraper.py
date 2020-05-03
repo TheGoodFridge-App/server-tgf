@@ -29,6 +29,3 @@ def scrape_url(url):
         SystemExit(e)
 
 scrape_url()
-
-    
-        
