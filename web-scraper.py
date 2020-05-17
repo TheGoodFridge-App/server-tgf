@@ -14,7 +14,7 @@ class Server_Object:
         self.score = score
         self.magnitude = magnitude
 
-Server_Object arr = []
+#Server_Object arr = []
 
 #Entity Analysis function
 class Entity:
