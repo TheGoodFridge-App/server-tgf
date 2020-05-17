@@ -7,14 +7,14 @@ from firebase_admin import credentials, firestore
 app = Flask(__name__)
 
 config = {
-    "apiKey": "AIzaSyBd7KiM7D2q22t3AF5ZJd14dRgNtxUFynQ",
-    "authDomain": "chat-app-demo-88083.firebaseapp.com",
-    "databaseURL": "https://chat-app-demo-88083.firebaseio.com",
-    "projectId": "chat-app-demo-88083",
-    "storageBucket": "chat-app-demo-88083.appspot.com",
-    "messagingSenderId": "156783601000",
-    "appId": "1:156783601000:web:c37c752214b3949c7f62dd",
-    "measurementId": "G-ZYT0ZF0ZMN"
+    "apiKey": "AIzaSyCOAo72xGq_9wtWzOmH-NQljf5IDlOEoFM",
+    "authDomain": "thegoodfridge-74422.firebaseapp.com",
+    "databaseURL": "https://thegoodfridge-74422.firebaseio.com",
+    "projectId": "thegoodfridge-74422",
+    "storageBucket": "thegoodfridge-74422.appspot.com",
+    "messagingSenderId": "892903011031",
+    "appId": "1:892903011031:web:b3f11720dfb8105f127692",
+    "measurementId": "G-QHL6DH1KMD"
 }
 
 firebase = pyrebase.initialize_app(config)
@@ -62,20 +62,29 @@ def register():
 
 @app.route('/api/values', methods=['GET', 'POST', 'PUT'])
 def post_values():
-    email = request.args.get('email')
-    first_name = request.args.get('first_name')
-    last_name = request.args.get('last_name')
+    email = request.args.get('email[]')
+    first_name = request.args.get('first_name[]')
+    last_name = request.args.get('last_name[]')
 
-    value1 = "True" == request.args.get('value1')
-    value2 = "True" == request.args.get('value2')
-    value3 = "True" == request.args.get('value3')
+    value1 = "true" == request.args.get('environment[]')
+    value2 = "true" == request.args.get('animal[]')
+    value3 = "true" == request.args.get('human[]')
+
+    environment_issues = request.args.getlist('environment_issues[]')
+    animal_issues = request.args.getlist('animal_issues[]')
+    human_issues = request.args.getlist('human_issues[]')
 
     try:
         ref = db.collection(u'users').document(str(email))
         ref.set({
-            u'value1': value1,
-            u'value2': value2,
-            u'value3': value3,
+            u'first_name': first_name,
+            u'last_name': last_name,
+            u'environment': value1,
+            u'animal': value2,
+            u'human': value3,
+            u'environment_issues': environment_issues,
+            u'animal_issues': animal_issues,
+            u'human_issues': human_issues
         })
         return 'Success', 200
 
@@ -85,22 +94,31 @@ def post_values():
 
 @app.route('/api/values/update', methods=['POST', 'PUT'])
 def update_values():
-    email = request.args.get('email')
+    email = request.args.get('email[]')
+    first_name = request.args.get('first_name[]')
+    last_name = request.args.get('last_name[]')
 
-    value1 = "True" == request.args.get('value1')
-    value2 = "True" == request.args.get('value2')
-    value3 = "True" == request.args.get('value3')
+    value1 = "true" == request.args.get('environment[]')
+    value2 = "true" == request.args.get('animal[]')
+    value3 = "true" == request.args.get('human[]')
+
+    environment_issues = request.args.getlist('environment_issues[]')
+    animal_issues = request.args.getlist('animal_issues[]')
+    human_issues = request.args.getlist('human_issues[]')
 
     try:
         ref = db.collection(u'users').document(str(email))
         ref.update({
             u'first_name': first_name,
             u'last_name': last_name,
-            u'value1': value1,
-            u'value2': value2,
-            u'value3': value3,
+            u'environment': value1,
+            u'animal': value2,
+            u'human': value3,
+            u'environment_issues': environment_issues,
+            u'animal_issues': animal_issues,
+            u'human_issues': human_issues
         })
-        return 'Sucess', 200
+        return 'Success', 200
 
     except Exception as e:
         ret = 'Failed with error: ' + str(e)
