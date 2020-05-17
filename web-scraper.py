@@ -48,7 +48,8 @@ class Analysis:
     #initializes an object with the correct url
     def __init__(self, object_to_search):
         self.object_to_search = object_to_search
-        self.url = 'https://www.google.com/search?q={0}&source=lnms&tbm=nws'.format(self.object_to_search)
+        #self.url = 'https://www.google.com/search?q={0}&source=lnms&tbm=nws'.format(self.object_to_search)
+        self.url = "https://www.google.com/search?sxsrf=ALeKk01aBV1XXhBr0o8x4xk-6x-RknZiqg%3A1589741016580&source=hp&ei=2IXBXqqLH86m_Qa1tIjABg&q=organic+milk+products&oq=organic+milk+products&gs_lcp=CgZwc3ktYWIQAzICCAAyAggAMgYIABAWEB4yBggAEBYQHjIGCAAQFhAeMgYIABAWEB4yBggAEBYQHjIGCAAQFhAeMgYIABAWEB4yBggAEBYQHjoECCMQJzoFCAAQkQI6BQgAEIMBOgQIABBDOgQIABAKOgcIABAUEIcCOgQIABANOggIABCGAxCLA1DrFljtZGD7ZWgIcAB4AIABrAGIAawbkgEEMC4yOZgBAKABAaoBB2d3cy13aXq4AQI&sclient=psy-ab&ved=0ahUKEwiq18vkxrvpAhVOU98KHTUaAmgQ4dUDCAk&uact=5"
         self.sentiment = 0
 
     def run(self):
