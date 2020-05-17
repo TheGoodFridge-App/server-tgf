@@ -3,6 +3,32 @@
 from bs4 import BeautifulSoup
 import requests
 
+from google.cloud import language_v1
+from google.cloud.language_v1 import enums
+
+
+
+#Entity Analysis function
+class Entity:
+    def __init__(self, document_to_use):
+        self.text_content = document_to_use
+        
+    def analyze_entities(text_content):
+        client = language_v1.LanguageServiceClient()
+        document = {"content": text_content, "type": type_}
+        encoding_type = enums.EncodingType.UTF8
+        response = client.analyze_entities(document, encoding_type=encoding_type)
+        for entity in response.entities:
+            print(u"Representative name for the entity: {}".format(entity.name))
+            print(u"Entity type: {}".format(enums.Entity.Type(entity.type).name))
+            print(u"Salience score: {}".format(entity.salience))
+            for metadata_name, metadata_value in entity.metadata.items():
+                print(u"{}: {}".format(metadata_name, metadata_value))
+            for mention in entity.mentions:
+                print(u"Mention text: {}".format(mention.text.content))
+                print(u"Mention type: {}".format(enums.EntityMention.Type(mention.type).name))
+
+
 # list of urls
 urls = [
     'https://www.sustain.ucla.edu/our-initiatives/food-systems/'
