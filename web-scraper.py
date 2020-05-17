@@ -3,8 +3,8 @@
 from bs4 import BeautifulSoup
 import requests
 
-from google.cloud import language_v1
-from google.cloud.language_v1 import enums
+from google.cloud import language
+from google.cloud.language import enums
 
 
 
