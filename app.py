@@ -63,6 +63,9 @@ def register():
 @app.route('/api/values', methods=['GET', 'POST', 'PUT'])
 def post_values():
     email = request.args.get('email')
+    first_name = request.args.get('first_name')
+    last_name = request.args.get('last_name')
+
     value1 = "True" == request.args.get('value1')
     value2 = "True" == request.args.get('value2')
     value3 = "True" == request.args.get('value3')
@@ -74,7 +77,7 @@ def post_values():
             u'value2': value2,
             u'value3': value3,
         })
-        return 'Sucess', 200
+        return 'Success', 200
 
     except Exception as e:
         ret = 'Failed with error: ' + str(e)
@@ -83,6 +86,7 @@ def post_values():
 @app.route('/api/values/update', methods=['POST', 'PUT'])
 def update_values():
     email = request.args.get('email')
+
     value1 = "True" == request.args.get('value1')
     value2 = "True" == request.args.get('value2')
     value3 = "True" == request.args.get('value3')
@@ -90,6 +94,8 @@ def update_values():
     try:
         ref = db.collection(u'users').document(str(email))
         ref.update({
+            u'first_name': first_name,
+            u'last_name': last_name,
             u'value1': value1,
             u'value2': value2,
             u'value3': value3,
