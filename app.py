@@ -28,7 +28,7 @@ db = firestore.client()
 
 @app.route("/")
 def index():
-    return "<h1> Hello World <h1>"
+    return "<h1> Hello World </h1>"
 
 @app.route('/api/login', methods=['GET'])
 def login():
@@ -74,7 +74,7 @@ def post_values():
             u'value2': value2,
             u'value3': value3,
         })
-        return 'Sucess', 200
+        return 'Success', 200
 
     except Exception as e:
         ret = 'Failed with error: ' + str(e)
@@ -94,7 +94,7 @@ def update_values():
             u'value2': value2,
             u'value3': value3,
         })
-        return 'Sucess', 200
+        return 'Success', 200
 
     except Exception as e:
         ret = 'Failed with error: ' + str(e)
@@ -115,6 +115,51 @@ def get_data():
         return ret, 400
 
 
+@app.route('/grocery_list')
+def update_grocery():
+    email = request.args.get('email')
+    g_list = request.args.get('list')
+
+    if g_list:
+        g_list = g_list.replace('\'', '')
+        g_list = g_list.replace(', ', ',')
+        g_list = g_list.split(',')
+
+    try:
+        ref = db.collection(u'users').document(str(email))
+        if g_list:
+            ref.update({
+                u'grocery_list': g_list
+            })
+
+        g_list = jsonify(ref.get().to_dict()['grocery_list'])
+        return g_list, 200
+
+    except Exception as e:
+        ret = 'Failed with error: ' + str(e)
+        return ret, 400
+
+@app.route('/goals', methods=['GET', 'POST', 'PUT'])
+def goal():
+    email = request.args.get('email')
+    goal = request.args.get('goal')
+
+    if goal:
+        goal = int(goal)
+
+    try:
+        ref = db.collection(u'users').document(str(email))
+
+        if goal:
+            ref.update({
+                u'goal': goal
+            })
+
+        return "Success", 200
+    
+    except Exception as e:
+        ret = 'Failed with error: ' + str(e)
+        return ret, 400
 
 #suggestions (get the product, get the data from sentiment)
 
