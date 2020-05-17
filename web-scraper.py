@@ -1,7 +1,8 @@
 #TODO: need to integrate entity analysis code into the Analysis function
 
-from bs4 import BeautifulSoup
+import urllib
 import requests
+from bs4 import BeautifulSoup
 
 from google.cloud import language
 from google.cloud.language import enums
@@ -43,26 +44,38 @@ searches = [
     'organic products'
 ]
 
+# desktop user-agent
+USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:65.0) Gecko/20100101 Firefox/65.0"
+# mobile user-agent
+MOBILE_USER_AGENT = "Mozilla/5.0 (Linux; Android 7.0; SM-G930V Build/NRD90M) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.125 Mobile Safari/537.36"
+headers = {"user-agent": USER_AGENT}
 
 class Analysis:
     #initializes an object with the correct url
     def __init__(self, object_to_search):
         self.object_to_search = object_to_search
         #self.url = 'https://www.google.com/search?q={0}&source=lnms&tbm=nws'.format(self.object_to_search)
-        self.url = "https://www.google.com/search?sxsrf=ALeKk01aBV1XXhBr0o8x4xk-6x-RknZiqg%3A1589741016580&source=hp&ei=2IXBXqqLH86m_Qa1tIjABg&q=organic+milk+products&oq=organic+milk+products&gs_lcp=CgZwc3ktYWIQAzICCAAyAggAMgYIABAWEB4yBggAEBYQHjIGCAAQFhAeMgYIABAWEB4yBggAEBYQHjIGCAAQFhAeMgYIABAWEB4yBggAEBYQHjoECCMQJzoFCAAQkQI6BQgAEIMBOgQIABBDOgQIABAKOgcIABAUEIcCOgQIABANOggIABCGAxCLA1DrFljtZGD7ZWgIcAB4AIABrAGIAawbkgEEMC4yOZgBAKABAaoBB2d3cy13aXq4AQI&sclient=psy-ab&ved=0ahUKEwiq18vkxrvpAhVOU98KHTUaAmgQ4dUDCAk&uact=5"
+        object_to_search = object_to_search.replace(' ', '+')
+        self.url = f"https://google.com/search?q={query}"
         self.sentiment = 0
 
     def run(self):
-        response = requests.get(self.url)
-        # gets all the webpages
-        soup = BeautifulSoup(response.text, 'html.parser')
-        # for each webpage, extracts text
-        #TODO: attach entity analysis code and pass text into entity analysis
-        for a in soup.find_all('a', href=True):
-            r = requests.get(a['href'])
-            new_soup = BeautifulSoup(r.text, 'html.parser')
-            document = new_soup.get_text(separator=" ")
-            return document
+resp = requests.get(self.url, headers=headers)
+i = 0
+if resp.status_code == 200:
+    soup = BeautifulSoup(resp.content, "html.parser")
+    results = []
+    for g in soup.find_all('div', class_='r'):
+        anchors = g.find_all('a')
+        if anchors:
+            link = anchors[0]['href']
+            response = requests.get(link, headers=headers)
+            if response.status_code == 200:
+                    soup_1 = BeautifulSoup(response.content, "html.parser")
+                    text += soup_1.find_all('p')
+                    i += 1
+                    if (i == 10)
+                        return text
 
 
 for search in searches:
