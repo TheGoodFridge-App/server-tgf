@@ -39,7 +39,7 @@ urls = [
     'https://www.sustain.ucla.edu/our-initiatives/food-systems/'
 ]
 
-searchs = [
+searches = [
     'organic products'
 ]
 
