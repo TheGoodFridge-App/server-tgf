@@ -6,3 +6,6 @@ serviceAccountKey.json
 images/
 credentials.json
 output_text.txt
+
+#flask server
+app.pyc

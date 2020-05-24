@@ -62,17 +62,29 @@ def register():
 
 @app.route('/api/values', methods=['GET', 'POST', 'PUT'])
 def post_values():
-    email = request.args.get('email')
-    value1 = "True" == request.args.get('value1')
-    value2 = "True" == request.args.get('value2')
-    value3 = "True" == request.args.get('value3')
+    email = request.args.get('email[]')
+    first_name = request.args.get('first_name[]')
+    last_name = request.args.get('last_name[]')
+
+    value1 = "true" == request.args.get('environment[]')
+    value2 = "true" == request.args.get('animal[]')
+    value3 = "true" == request.args.get('human[]')
+
+    environment_issues = request.args.getlist('environment_issues[]')
+    animal_issues = request.args.getlist('animal_issues[]')
+    human_issues = request.args.getlist('human_issues[]')
 
     try:
         ref = db.collection(u'users').document(str(email))
         ref.set({
-            u'value1': value1,
-            u'value2': value2,
-            u'value3': value3,
+            u'first_name': first_name,
+            u'last_name': last_name,
+            u'environment': value1,
+            u'animal': value2,
+            u'human': value3,
+            u'environment_issues': environment_issues,
+            u'animal_issues': animal_issues,
+            u'human_issues': human_issues
         })
         return 'Success', 200
 
@@ -80,19 +92,31 @@ def post_values():
         ret = 'Failed with error: ' + str(e)
         return ret, 400
 
-@app.route('/api/values/update', methods=['POST', 'PUT'])
+@app.route('/api/values/update', methods=['GET', 'POST', 'PUT'])
 def update_values():
-    email = request.args.get('email')
-    value1 = "True" == request.args.get('value1')
-    value2 = "True" == request.args.get('value2')
-    value3 = "True" == request.args.get('value3')
+    email = request.args.get('email[]')
+    first_name = request.args.get('first_name[]')
+    last_name = request.args.get('last_name[]')
+
+    value1 = "true" == request.args.get('environment[]')
+    value2 = "true" == request.args.get('animal[]')
+    value3 = "true" == request.args.get('human[]')
+
+    environment_issues = request.args.getlist('environment_issues[]')
+    animal_issues = request.args.getlist('animal_issues[]')
+    human_issues = request.args.getlist('human_issues[]')
 
     try:
         ref = db.collection(u'users').document(str(email))
         ref.update({
-            u'value1': value1,
-            u'value2': value2,
-            u'value3': value3,
+            u'first_name': first_name,
+            u'last_name': last_name,
+            u'environment': value1,
+            u'animal': value2,
+            u'human': value3,
+            u'environment_issues': environment_issues,
+            u'animal_issues': animal_issues,
+            u'human_issues': human_issues
         })
         return 'Success', 200
 
@@ -132,28 +156,41 @@ def update_grocery():
                 u'grocery_list': g_list
             })
 
-        g_list = jsonify(ref.get().to_dict()['grocery_list'])
+        else:
+            g_list = jsonify(ref.get().to_dict()['grocery_list'])
         return g_list, 200
 
     except Exception as e:
         ret = 'Failed with error: ' + str(e)
         return ret, 400
 
-@app.route('/goals', methods=['GET', 'POST', 'PUT'])
+def check_grocery(g_list):
+    print(g_list)
+
+@app.route('/goal', methods=['GET', 'POST', 'PUT'])
 def goal():
     email = request.args.get('email')
     goal = request.args.get('goal')
+    progress = request.args.get('progress')
 
     if goal:
         goal = int(goal)
+
+    if progress:
+        progress = int(progress)
 
     try:
         ref = db.collection(u'users').document(str(email))
 
         if goal:
-            ref.update({
-                u'goal': goal
-            })
+            if progress:
+                update = {"goals": {'goal': goal, 'progress': progress}}
+            else:
+                update = {"goals": {'goal': goal}}
+        else:
+            update = {"goals": {"progress": progress}}
+        
+        ref.update(update)
 
         return "Success", 200
     
