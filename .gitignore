@@ -1,2 +1,11 @@
+#backend
 templates/
 serviceAccountKey.json
+
+#text-recognition
+images/
+credentials.json
+output_text.txt
+
+#flask server
+app.pyc

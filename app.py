@@ -28,7 +28,7 @@ db = firestore.client()
 
 @app.route("/")
 def index():
-    return "<h1> Hello World <h1>"
+    return "<h1> Hello World </h1>"
 
 @app.route('/api/login', methods=['GET'])
 def login():
@@ -92,7 +92,7 @@ def post_values():
         ret = 'Failed with error: ' + str(e)
         return ret, 400
 
-@app.route('/api/values/update', methods=['POST', 'PUT'])
+@app.route('/api/values/update', methods=['GET', 'POST', 'PUT'])
 def update_values():
     email = request.args.get('email[]')
     first_name = request.args.get('first_name[]')
@@ -139,6 +139,64 @@ def get_data():
         return ret, 400
 
 
+@app.route('/grocery_list')
+def update_grocery():
+    email = request.args.get('email')
+    g_list = request.args.get('list')
+
+    if g_list:
+        g_list = g_list.replace('\'', '')
+        g_list = g_list.replace(', ', ',')
+        g_list = g_list.split(',')
+
+    try:
+        ref = db.collection(u'users').document(str(email))
+        if g_list:
+            ref.update({
+                u'grocery_list': g_list
+            })
+
+        else:
+            g_list = jsonify(ref.get().to_dict()['grocery_list'])
+        return g_list, 200
+
+    except Exception as e:
+        ret = 'Failed with error: ' + str(e)
+        return ret, 400
+
+def check_grocery(g_list):
+    print(g_list)
+
+@app.route('/goal', methods=['GET', 'POST', 'PUT'])
+def goal():
+    email = request.args.get('email')
+    goal = request.args.get('goal')
+    progress = request.args.get('progress')
+
+    if goal:
+        goal = int(goal)
+
+    if progress:
+        progress = int(progress)
+
+    try:
+        ref = db.collection(u'users').document(str(email))
+
+        if goal:
+            if progress:
+                update = {"goals": {'goal': goal, 'progress': progress}}
+            else:
+                update = {"goals": {'goal': goal}}
+        else:
+            update = {"goals": {"progress": progress}}
+        
+        ref.update(update)
+
+        return "Success", 200
+    
+    except Exception as e:
+        ret = 'Failed with error: ' + str(e)
+        return ret, 400
 
 #suggestions (get the product, get the data from sentiment)
 
