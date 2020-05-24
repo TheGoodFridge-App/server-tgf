@@ -3,5 +3,4 @@ flask-cors
 flask-restful
 gunicorn
 pyrebase
-json
 firebase-admin
