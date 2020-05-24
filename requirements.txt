@@ -1,6 +1,5 @@
 flask
 flask-cors
-flask-restful
 gunicorn
 pyrebase
 firebase-admin
