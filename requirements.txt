@@ -3,3 +3,4 @@ flask-cors
 gunicorn
 pyrebase
 firebase-admin
+os

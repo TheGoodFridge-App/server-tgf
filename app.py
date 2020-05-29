@@ -3,8 +3,11 @@ import pyrebase
 import json
 import firebase_admin
 from firebase_admin import credentials, firestore
+from flask_cors import CORS
+from os import environ
 
 app = Flask(__name__)
+CORS(app)
 
 config = {
     "apiKey": "AIzaSyBd7KiM7D2q22t3AF5ZJd14dRgNtxUFynQ",
@@ -21,10 +24,23 @@ firebase = pyrebase.initialize_app(config)
 
 auth = firebase.auth()
 
-cred = credentials.Certificate('./serviceAccountKey.json')
+cred = environ.get('SERVICE_ACCOUNT', None)
+
+if cred:
+    f = open('./serviceAccountKey-Heroku.json', 'w+')
+    f.write(cred)
+    f.close()
+    
+    cred = credentials.Certificate('./serviceAccountKey-Heroku.json')
+
+if not cred:
+    cred = credentials.Certificate('./serviceAccountKey.json')
+
 default_app = firebase_admin.initialize_app(cred)
 
 db = firestore.client()
+
+app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True #make the json pretty
 
 @app.route("/")
 def index():
@@ -202,4 +218,4 @@ def goal():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
