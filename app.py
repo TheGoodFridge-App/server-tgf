@@ -49,7 +49,10 @@ try:
 except:
     pass
 
-db = firestore.client()
+try:
+    db = firestore.client()
+except:
+    pass
 
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True #make the json pretty
 
