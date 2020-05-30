@@ -3,11 +3,9 @@ import pyrebase
 import json
 import firebase_admin
 from firebase_admin import credentials, firestore
-from flask_cors import CORS
 from os import environ
 
 app = Flask(__name__)
-CORS(app)
 
 config = {
     "apiKey": "AIzaSyBd7KiM7D2q22t3AF5ZJd14dRgNtxUFynQ",
@@ -24,35 +22,24 @@ firebase = pyrebase.initialize_app(config)
 
 auth = firebase.auth()
 
-cred = environ.get('SERVICE_ACCOUNT', None)
+cred = {
+    u"type": "service_account",
+    u"project_id": "thegoodfridge-74422",
+    u"private_key_id": environ['PRIVATE_KEY_ID'],
+    u"private_key": environ['PRIVATE_KEY'].replace('\\n', '\n'),
+    u"client_email": environ['CLIENT_EMAIL'],
+    u"client_id": environ['CLIENT_ID'],
+    u"auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    u"token_uri": "https://oauth2.googleapis.com/token",
+    u"auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    u"client_x509_cert_url": environ['CLIENT_CERT_URL']
+}
 
-if cred:
-    print(cred)
-    f = open('./serviceAccountKey-Heroku.json', 'w+')
-    f.write(cred)
-    f.close()
-    
-    try:
-        cred = credentials.Certificate('./serviceAccountKey-Heroku.json')
-    except:
-        pass
+cred = credentials.Certificate(cred)
 
-if not cred:
+default_app = firebase_admin.initialize_app(cred)
 
-    try:
-        cred = credentials.Certificate('./serviceAccountKey.json')
-    except:
-        pass
-
-try:
-    default_app = firebase_admin.initialize_app(cred)
-except:
-    pass
-
-try:
-    db = firestore.client()
-except:
-    pass
+db = firestore.client()
 
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True #make the json pretty
 

@@ -9,3 +9,6 @@ output_text.txt
 
 #flask server
 app.pyc
+
+#heroku
+.env
