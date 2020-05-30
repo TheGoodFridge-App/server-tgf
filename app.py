@@ -27,16 +27,27 @@ auth = firebase.auth()
 cred = environ.get('SERVICE_ACCOUNT', None)
 
 if cred:
+    print(cred)
     f = open('./serviceAccountKey-Heroku.json', 'w+')
     f.write(cred)
     f.close()
     
-    cred = credentials.Certificate('./serviceAccountKey-Heroku.json')
+    try:
+        cred = credentials.Certificate('./serviceAccountKey-Heroku.json')
+    except:
+        pass
 
 if not cred:
-    cred = credentials.Certificate('./serviceAccountKey.json')
 
-default_app = firebase_admin.initialize_app(cred)
+    try:
+        cred = credentials.Certificate('./serviceAccountKey.json')
+    except:
+        pass
+
+try:
+    default_app = firebase_admin.initialize_app(cred)
+except:
+    pass
 
 db = firestore.client()
 
