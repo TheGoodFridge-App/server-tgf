@@ -139,26 +139,48 @@ def get_data():
         return ret, 400
 
 
-@app.route('/grocery_list')
-def update_grocery():
+@app.route('/grocery_list/get', methods=['GET'])
+def get_grocery():
     email = request.args.get('email')
-    g_list = request.args.get('list')
-
-    if g_list:
-        g_list = g_list.replace('\'', '')
-        g_list = g_list.replace(', ', ',')
-        g_list = g_list.split(',')
 
     try:
         ref = db.collection(u'users').document(str(email))
+        data = ref.get()
+
+        return jsonify(data.to_dict()), 200
+
+    except Exception as e:
+        ret = 'Failed with error: ' + str(e)
+        return ret, 400
+
+@app.route('/grocery_list', methods=['POST'])
+def post_grocery():
+    email = request.args.get('email[]')
+    g_list = request.args.getlist('items[]')
+    print(email, g_list)
+
+    #if g_list:
+    #    g_list = g_list.replace('\'', '')
+    #    g_list = g_list.replace(', ', ',')
+    #    g_list = g_list.split(',')
+
+    try:
+        ref = db.collection(u'groceries').document(str(email))
         if g_list:
-            ref.update({
+            ref.set({
+                u'email': email,
                 u'grocery_list': g_list
             })
-
         else:
-            g_list = jsonify(ref.get().to_dict()['grocery_list'])
-        return g_list, 200
+            raise Exception('Empty grocery list')
+            #g_list = jsonify(ref.get().to_dict()['grocery_list'])
+        
+        grocery_dict = {
+            "recommendations": g_list,
+            "other": g_list
+        }
+
+        return grocery_dict, 200
 
     except Exception as e:
         ret = 'Failed with error: ' + str(e)
