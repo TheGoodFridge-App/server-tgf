@@ -9,7 +9,7 @@ from google.cloud.language import enums
 
 
 
-class Server_Object:
+class server_obj:
     def __init__(self, name, score, magnitude):
         self.name = name
         self.score = score
@@ -29,20 +29,41 @@ class Entity:
         document = {"content": self.text_content, "type": type_, "language": lang}
         encoding_type = enums.EncodingType.UTF8
         response = client.analyze_entity_sentiment(document, encoding_type=encoding_type)
+        list = []
         for entity in response.entities:
             sentiment = entity.sentiment
-            if (entity.type=="3" and sentiment.score!=0.0 and entity.name!="producer" and entity.name!="data-entity" and entity.name!="data-entity-type" and entity.name!="producers" and entity.name!="entity-substitution" and entity.name!="data-entity-substitution"):
-                print(u"Representative name for the entity: {}".format(entity.name))
-                print(u"Entity sentiment score: {}".format(sentiment.score))
-                print(u"Entity sentiment magnitude: {}".format(sentiment.magnitude))
-                print(u"Entity type: {}".format(entity.type))
+            if (sentiment.score!=0.0 and entity.name != "Money" and entity.name != "Fashion" and entity.name != "Investment" and entity.name != "Energy" and entity.name != "Home" and entity.name != "Beauty" and entity.name != "Thanks" and entity.name != "Finance" and entity.name != "Building" and entity.name != "Health" and entity.name != "Company" and entity.name != "Companies" and entity.name!="producer" and entity.name!="data-entity" and entity.name!="data-entity-type" and entity.name!="producers" and entity.name!="entity-substitution" and entity.name!="data-entity-substitution" and entity.type != 'LOCATION' and entity.type != 'EVENT' and entity.type != 'PERSON' and entity.type != 'PRICE'):
+                if (entity.name[0].isupper()):
+                    list.append(server_obj(entity.name, sentiment.score, sentiment.magnitude))
+                    #print(u"Representative name for the entity: {}".format(entity.name))
+                    #print(u"Entity sentiment score: {}".format(sentiment.score))
+                    #print(u"Entity sentiment magnitude: {}".format(sentiment.magnitude))
+                    #print(u"Entity type: {}".format(entity.type))
+        list.sort(key=lambda x: x.score, reverse=True)
+        for obj in list:
+            print(u"Representative name for the entity: {}".format(obj.name))
+            print(u"Entity sentiment score: {}".format(obj.score))
+            print(u"Entity sentiment magnitude: {}".format(obj.magnitude))
 
 
 
 
+products = [
+    #"milk"
+    "cereal"
+    #"coffee"
+    #"candy"
+    #"chocolate"
+    #"beer"
+    #"drinks"
+    #"fast food"
+]
 searches = [
-    'ethical levels of milk brands'
-    'most ethical milk brands'
+    "ethical levels of"
+    "most ethical"
+    "how ethical are different"
+    #"fairtrade"
+    #"ranking ethical"
 ]
 
 # desktop user-agent
@@ -78,7 +99,7 @@ class Analysis:
                                 soup_1 = BeautifulSoup(response.content, "html.parser")
                                 text += str(soup_1.find_all('p'))
                                 i += 1
-                                if (i == 20):
+                                if (i == 3):
                                     break
                                     #print(text)
                                     #return text
@@ -88,7 +109,11 @@ class Analysis:
 
 
 for search in searches:
-    obj_web_scrape = Analysis(search)
-    doc = obj_web_scrape.run()
-    obj_entity_analysis = Entity(doc)
-    obj_entity_analysis.analyze_entities()
+    for product in products:
+        sep = " "
+        seq = (search, product, "brands")
+        str1 = sep.join(seq)
+        obj_web_scrape = Analysis(str1)
+        doc = obj_web_scrape.run()
+        obj_entity_analysis = Entity(doc)
+        obj_entity_analysis.analyze_entities()
