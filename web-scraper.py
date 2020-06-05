@@ -50,7 +50,7 @@ class Entity:
 
 products = [
     #"milk"
-    #"cereal"
+    "cereal"
     #"coffee"
     #"candy"
     #"chocolate"
@@ -70,7 +70,7 @@ products = [
     #"nut"
     #"salt"
     #"pepper"
-    "sugar"
+    #"sugar"
     #"honey"
     #"cookies"
 
@@ -117,7 +117,7 @@ class Analysis:
                                 soup_1 = BeautifulSoup(response.content, "html.parser")
                                 text += str(soup_1.find_all('p'))
                                 i += 1
-                                if (i == 8):
+                                if (i == 10):
                                     break
                                     #print(text)
                                     #return text
