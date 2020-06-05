@@ -3,7 +3,8 @@ import pyrebase
 import json
 import firebase_admin
 from firebase_admin import credentials, firestore
-from os import environ
+from os import environ, path
+from collections import defaultdict
 
 app = Flask(__name__)
 
@@ -192,9 +193,11 @@ def post_grocery():
             raise Exception('Empty grocery list')
             #g_list = jsonify(ref.get().to_dict()['grocery_list'])
         
+        recommendations, other = check_grocery(g_list)
+
         grocery_dict = {
-            "recommendations": g_list,
-            "other": g_list
+            "recommendations": recommendations,
+            "other": other
         }
 
         return grocery_dict, 200
@@ -204,7 +207,18 @@ def post_grocery():
         return ret, 400
 
 def check_grocery(g_list):
-    print(g_list)
+    recommendations = defaultdict(list)
+
+    for item in g_list:
+        paths = 'ml-data/' + item.lower() + '.txt'
+        if path.exists(paths):
+            f = open(paths, 'r')
+            for line in f:
+                brand, score = line.replace('\n', '').split(', ')
+                if int(score) >= 1:
+                    recommendations[str(item)] += [brand]
+
+    return recommendations, [item for item in g_list if item not in recommendations]
 
 @app.route('/goal', methods=['GET', 'POST', 'PUT'])
 def goal():
