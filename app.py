@@ -171,7 +171,7 @@ def get_grocery():
         ret = 'Failed with error: ' + str(e)
         return ret, 400
 
-@app.route('/grocery_list', methods=['POST'])
+@app.route('/grocery_list', methods=['GET', 'POST'])
 def post_grocery():
     email = request.args.get('email[]')
     g_list = request.args.getlist('items[]')
@@ -211,13 +211,29 @@ def check_grocery(g_list):
 
     for item in g_list:
         paths = 'ml-data/' + item.lower() + '.txt'
+        paths_plural = 'ml-data/' + item.lower() + 's' + '.txt'
         if path.exists(paths):
             f = open(paths, 'r')
+            i = 0
             for line in f:
+                if i >= 3:
+                    break
                 brand, score = line.replace('\n', '').split(', ')
-                if int(score) >= 1:
-                    recommendations[str(item)] += [brand]
+                recommendations[str(item)] += [brand]
+                i += 1
+        
+        elif path.exists(paths_plural):
+            f = open(paths_plural, 'r')
+            i = 0
+            for line in f:
+                if i >= 3:
+                    break
+                brand, score = line.replace('\n', '').split(', ')
+                recommendations[str(item)] += [brand]
+                i += 1
 
+    # recommendations = sorted(recommendations.items(), key=lambda k_v: k_v[1], reverse=True)[:3]
+    print(recommendations)
     return recommendations, [item for item in g_list if item not in recommendations]
 
 @app.route('/goal', methods=['GET', 'POST', 'PUT'])
