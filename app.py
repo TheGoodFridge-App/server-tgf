@@ -162,7 +162,7 @@ def get_grocery():
     email = request.args.get('email')
 
     try:
-        ref = db.collection(u'users').document(str(email))
+        ref = db.collection(u'groceries').document(str(email))
         data = ref.get()
 
         return jsonify(data.to_dict()), 200
