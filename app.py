@@ -155,6 +155,7 @@ def get_grocery():
 
 @app.route('/grocery_list', methods=['POST'])
 def post_grocery():
+    print(request)
     email = request.args.get('email[]')
     g_list = request.args.getlist('items[]')
     print(email, g_list)
@@ -180,7 +181,7 @@ def post_grocery():
             "other": g_list
         }
 
-        return grocery_dict, 200
+        return jsonify(grocery_dict), 200
 
     except Exception as e:
         ret = 'Failed with error: ' + str(e)
