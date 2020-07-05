@@ -1,5 +1,4 @@
-#TODO: need to integrate entity analysis code into the Analysis function
-
+import sys
 import urllib
 import requests
 from bs4 import BeautifulSoup
@@ -40,8 +39,13 @@ class Entity:
                     #print(u"Entity sentiment magnitude: {}".format(sentiment.magnitude))
                     #print(u"Entity type: {}".format(entity.type))
         list.sort(key=lambda x: x.score, reverse=True)
+        str = ""
         for obj in list:
             print(u"{}, {}".format(obj.name, obj.score))
+            str_add = u"{}, {}".format(obj.name, obj.score)
+            str+="\n"
+            str+=str_add
+        return str
             #print(u"Entity sentiment score: {}".format(obj.score))
             #print(u"Entity sentiment magnitude: {}".format(obj.magnitude))
 
@@ -50,7 +54,7 @@ class Entity:
 
 products = [
     #"milk"
-    "cereal"
+    #"cereal"
     #"coffee"
     #"candy"
     #"chocolate"
@@ -72,7 +76,8 @@ products = [
     #"pepper"
     #"sugar"
     #"honey"
-    #"cookies"
+    #"cookies
+    "cereals"
 
 
 ]
@@ -117,7 +122,7 @@ class Analysis:
                                 soup_1 = BeautifulSoup(response.content, "html.parser")
                                 text += str(soup_1.find_all('p'))
                                 i += 1
-                                if (i == 10):
+                                if (i == 1):
                                     break
                                     #print(text)
                                     #return text
@@ -125,13 +130,37 @@ class Analysis:
                                 pass
         return(text)
 
-
-for search in searches:
-    for product in products:
+run_label = 0
+if len(sys.argv) >= 2 and sys.argv[1] == "label":
+    run_label = 1
+    labels = sys.argv[2:]
+    for label_type in labels:
+        label_filename = label_type
+        label_string = label_type.replace('-', ' ')
         sep = " "
-        seq = (search, product, "brands")
-        str1 = sep.join(seq)
-        obj_web_scrape = Analysis(str1)
+        seq = (label_string, "brands")
+        label_search = sep.join(seq)
+        obj_web_scrape = Analysis(label_search)
         doc = obj_web_scrape.run()
-        obj_entity_analysis = Entity(doc)
-        obj_entity_analysis.analyze_entities()
+        result = obj_entity_analysis.analyze_entities()
+        l_filename = label_filename+".txt"
+        f = open(l_filename, "w+")
+        f.write(result)
+
+if run_label == 0:
+    for search in searches:
+        if len(sys.argv) >= 2:
+            brandnames = sys.argv[1:]
+        else:
+            brandnames = products
+            for brandname in brandnames:
+                sep = " "
+                seq = (search, brandname, "brands")
+                str1 = sep.join(seq)
+                obj_web_scrape = Analysis(str1)
+                doc = obj_web_scrape.run()
+                obj_entity_analysis = Entity(doc)
+                result = obj_entity_analysis.analyze_entities()
+                filename = brandname+".txt"
+                f = open(filename, "w+")
+                f.write(result)
