@@ -75,4 +75,25 @@ def check_grocery(g_list):
 
     return recommendations, [item for item in g_list if item not in recommendations]
 
-    
+@grocery_list.route('/purchased', methods=['PUT'])
+def purchased():
+    email = request.args.get('email')
+    product = request.args.get('product')
+    brand = request.args.get('brand')
+
+    try:
+        ref = db.collection(u'users').document(email).collection('groceries').document('purchased')
+
+        update_list = {}
+        update_list[product] = brand
+
+        if product and brand:
+            ref.update(update_list)
+            return "Success", 200
+
+        else:
+            raise Exception('Empty product name or brand')
+
+    except Exception as e:
+        ret = 'Failed with error: ' + str(e)
+        return ret, 400
