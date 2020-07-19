@@ -12,3 +12,4 @@ output_text.txt
 
 #heroku
 .env
+env_var.sh
