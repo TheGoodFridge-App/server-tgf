@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request
 from os import path
 from collections import defaultdict
 from firestore import db
@@ -10,10 +10,16 @@ def get_grocery():
     email = request.args.get('email')
 
     try:
-        ref = db.collection(u'groceries').document(str(email))
-        data = ref.get()
+        ref = db.collection(u'users').document(str(email)).collection('groceries')
+        docs = ref.stream()
+        data = {}
 
-        return jsonify(data.to_dict()), 200
+        for doc in docs:
+            data[doc.id] = doc.to_dict()
+
+        data["grocery_list"] = data["grocery_list"]["grocery_list"]
+
+        return data, 200
 
     except Exception as e:
         ret = 'Failed with error: ' + str(e)
@@ -25,10 +31,9 @@ def post_grocery():
     g_list = request.args.getlist('items[]')
 
     try:
-        ref = db.collection(u'groceries').document(str(email))
+        ref = db.collection(u'users').document(str(email)).collection('groceries').document('grocery_list')
         if g_list:
             ref.set({
-                u'email': email,
                 u'grocery_list': g_list
             })
         else:
