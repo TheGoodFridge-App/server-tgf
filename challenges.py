@@ -25,12 +25,14 @@ def get_challenges_from_issues():
         for doc in data:
             issue_challenges.update(data[doc])
 
-        challenges = defaultdict()
+        challenges = []
         # get the challenges for the issues provided
         for issue in issues:
-            challenges[issue] = issue_challenges[issue]
+            challenges += issue_challenges[issue]
 
-        return challenges, 200
+        challenges = list(set(challenges))
+
+        return {'challenges': challenges}, 200
 
     except Exception as e:
         print(e)
