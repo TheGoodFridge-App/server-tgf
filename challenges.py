@@ -30,7 +30,7 @@ def get_challenges_from_issues():
         for issue in issues:
             challenges += issue_challenges[issue]
 
-        return challenges, 200
+        return {'challenges': challenges}, 200
 
     except Exception as e:
         print(e)
