@@ -8,4 +8,8 @@ credentials.json
 output_text.txt
 
 #flask server
-app.pyc
+*.pyc
+
+#heroku
+.env
+env_var.sh
