@@ -71,3 +71,7 @@ def get_challenges_from_labels():
         print(e)
         ret = 'Failed with error: ' + str(e)
         return ret, 400
+
+# @challenges.route('/desc')
+# def get_description():
+#     challenge = request.arg.get('challenge')
