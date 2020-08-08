@@ -74,7 +74,7 @@ def get_challenges_from_labels():
 
 
 @challenges.route('/descriptions')
-def get_challenges_from_labels():
+def get_descriptions():
     challenges = request.args.getlist('challenges[]')
 
     try:
