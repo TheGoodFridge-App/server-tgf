@@ -94,10 +94,10 @@ def get_descriptions():
             challenge_descriptions.update(data[doc])
 
         print(challenge_descriptions)
-        descriptions = []
+        descriptions = defaultdict()
         # get the challenges for the issues provided
         for challenge in challenges:
-            descriptions.append(challenge_descriptions[challenge])
+            descriptions[challenge] = challenge_descriptions[challenge]
 
         return {'descriptions': descriptions}, 200
 
