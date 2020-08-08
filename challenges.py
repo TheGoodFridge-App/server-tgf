@@ -93,6 +93,7 @@ def get_descriptions():
         for doc in data:
             challenge_descriptions.update(data[doc])
 
+        print(challenge_descriptions)
         descriptions = []
         # get the challenges for the issues provided
         for challenge in challenges:
