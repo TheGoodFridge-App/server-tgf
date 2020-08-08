@@ -74,7 +74,7 @@ def get_challenges_from_labels():
 
 
 @challenges.route('/descriptions')
-def get_challenges_from_labels():
+def get_descriptions():
     challenges = request.args.getlist('challenges[]')
 
     try:
@@ -96,7 +96,7 @@ def get_challenges_from_labels():
         descriptions = []
         # get the challenges for the issues provided
         for challenge in challenges:
-            descriptions.append(challenges[challenge])
+            descriptions.append(challenge_descriptions[challenge])
 
         return {'descriptions': descriptions}, 200
 
