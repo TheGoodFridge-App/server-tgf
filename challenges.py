@@ -71,3 +71,36 @@ def get_challenges_from_labels():
         print(e)
         ret = 'Failed with error: ' + str(e)
         return ret, 400
+
+
+@challenges.route('/descriptions')
+def get_challenges_from_labels():
+    challenges = request.args.getlist('challenges[]')
+
+    try:
+        ref = db.collection(u'relationships')
+        docs = ref.stream()
+        data = {}
+        challenge_descriptions = {}
+
+        for doc in docs:
+            data[doc.id] = doc.to_dict()
+
+        # need only challenge descriptions
+        data = data['challenge_descriptions']
+
+        # make a dict of just arrays so its easier to get the challenges
+        for doc in data:
+            challenge_descriptions.update(data[doc])
+
+        descriptions = []
+        # get the challenges for the issues provided
+        for challenge in challenges:
+            descriptions.append(challenges[challenge])
+
+        return {'descriptions': descriptions}, 200
+
+    except Exception as e:
+        print(e)
+        ret = 'Failed with error: ' + str(e)
+        return ret, 400
