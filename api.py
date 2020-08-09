@@ -96,3 +96,26 @@ def get_data():
     except Exception as e:
         ret = 'Failed with error: ' + str(e)
         return ret, 400
+
+@api.route('/change_name', methods=['PUT', 'POST'])
+def change_name():
+    email = request.args.get('email')
+    first_name = request.args.get('first_name')
+    last_name = request.args.get('last_name')
+    secret = request.args.get('secret')
+
+    if secret != environ.get('APP_SECRET'):
+        return 'Sorry you are not authorized to perform this action', 400
+    
+    try:
+        ref = db.collection(u'users').document(str(email))
+        ref.update({
+            u'first_name': first_name,
+            u'last_name': last_name,
+        })
+
+        return 'Success', 200
+
+    except Exception as e:
+        ret = 'Failed with error: ' + str(e)
+        return ret, 400
