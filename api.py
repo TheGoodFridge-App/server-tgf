@@ -4,6 +4,7 @@ from os import environ
 
 api = Blueprint("api", __name__)
 
+
 @api.route('/values', methods=['GET', 'POST', 'PUT'])
 def post_values():
     email = request.args.get('email[]')
@@ -40,6 +41,7 @@ def post_values():
         ret = 'Failed with error: ' + str(e)
         return ret, 400
 
+
 @api.route('/values/update', methods=['GET', 'POST', 'PUT'])
 def update_values():
     email = request.args.get('email[]')
@@ -75,6 +77,7 @@ def update_values():
     except Exception as e:
         ret = 'Failed with error: ' + str(e)
         return ret, 400
+
 
 @api.route('/data', methods=['GET'])
 def get_data():
