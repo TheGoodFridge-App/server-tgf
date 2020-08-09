@@ -75,7 +75,7 @@ def get_challenges_from_labels():
 
 @challenges.route('/descriptions')
 def get_descriptions():
-    challenges = request.args.getlist('challenges[]')
+    challenge = request.args.getlist('challenge')
     try:
         ref = db.collection(u'relationships')
         docs = ref.stream()
@@ -92,12 +92,8 @@ def get_descriptions():
         for doc in data:
             challenge_descriptions.update(data[doc])
 
-        descriptions = defaultdict()
         # get the challenges for the issues provided
-        for challenge in challenges:
-            descriptions[challenge] = challenge_descriptions[challenge]
-
-        return {'descriptions': descriptions}, 200
+        return {'description': challenge_descriptions[challenge]}, 200
 
     except Exception as e:
         print(e)
