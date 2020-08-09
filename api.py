@@ -10,7 +10,7 @@ def post_values():
     email = request.args.get('email[]')
     first_name = request.args.get('first_name[]')
     last_name = request.args.get('last_name[]')
-    secret = request.args.get('secret[]')
+    secret = request.args.get('secret')
 
     if secret != environ.get('APP_SECRET'):
         return 'Sorry you are not authorized to perform this action', 400
@@ -47,7 +47,7 @@ def update_values():
     email = request.args.get('email[]')
     first_name = request.args.get('first_name[]')
     last_name = request.args.get('last_name[]')
-    secret = request.args.get('secret[]')
+    secret = request.args.get('secret')
 
     if secret != environ.get('APP_SECRET'):
         return 'Sorry you are not authorized to perform this action', 400

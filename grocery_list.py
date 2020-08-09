@@ -9,7 +9,7 @@ grocery_list = Blueprint("grocery_list", __name__)
 @grocery_list.route('/get', methods=['GET'])
 def get_grocery():
     email = request.args.get('email')
-    secret = request.args.get('secret[]')
+    secret = request.args.get('secret')
 
     if secret != environ.get('APP_SECRET'):
         return 'Sorry you are not authorized to perform this action', 400
@@ -34,7 +34,7 @@ def get_grocery():
 def post_grocery():
     email = request.args.get('email[]')
     g_list = request.args.getlist('items[]')
-    secret = request.args.get('secret[]')
+    secret = request.args.get('secret')
 
     if secret != environ.get('APP_SECRET'):
         return 'Sorry you are not authorized to perform this action', 400
@@ -94,7 +94,7 @@ def purchased():
     email = request.args.get('email')
     product = request.args.get('product')
     brand = request.args.get('brand')
-    secret = request.args.get('secret[]')
+    secret = request.args.get('secret')
 
     if secret != environ.get('APP_SECRET'):
         return 'Sorry you are not authorized to perform this action', 400
