@@ -34,7 +34,7 @@ def get_grocery():
 def post_grocery():
     email = request.args.get('email[]')
     g_list = request.args.getlist('items[]')
-    secret = request.args.get('secret')
+    secret = request.args.get('secret[]')
 
     if secret != environ.get('APP_SECRET'):
         return 'Sorry you are not authorized to perform this action', 400
