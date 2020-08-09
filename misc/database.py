@@ -163,7 +163,7 @@ formatted_challenges = {
         'Conserve with Coffee'
     ],
     'animal': [
-        'Leaders of Breeders',
+        'Leaders for Breeders',
         'Transport Tactitian',
         'Habitat Heroes',
         'Humane Handlers',
@@ -205,7 +205,7 @@ challenges_map = {
         'Conserve with Coffee'
     ],
     "animal": [
-        'Leaders of Breeders',
+        'Leaders for Breeders',
         'Transport Tactitian',
         'Habitat Heroes',
         'Humane Handlers',
@@ -243,7 +243,7 @@ challenges = [
     'Patron for Regeneration',
     'Dairy Delight',  # 10
     'Conserve with Coffee',
-    'Leaders of Breeders',
+    'Leaders for Breeders',
     'Transport Tactitian',
     'Habitat Heroes',
     'Humane Handlers',
@@ -265,39 +265,39 @@ challenges = [
     'Spice Savior'
 ]
 
-# # hash map from issues to challenges
-# issues_challenges = {
-#     'environment': {
-#         'Environment Regeneration': [challenges[9], challenges[4]],
-#         'Reduced Emissions': [challenges[2], challenges[1], challenges[9], challenges[10]],
-#         'Conservation': [challenges[3], challenges[1], challenges[11], challenges[0], challenges[6], challenges[9], challenges[11]],
-#         'Biodiversity': [challenges[4], challenges[1], challenges[0], challenges[9], challenges[11]],
-#         'Waste Management': [challenges[5], challenges[1], challenges[8], challenges[3], challenges[0]],
-#         'Water Management': [challenges[6], challenges[1], challenges[0], challenges[3]],
-#         'Air Quality': [challenges[7], challenges[1], challenges[2], challenges[10], challenges[11]],
-#         'Pollution Reduction': [challenges[8], challenges[0], challenges[6], challenges[5], challenges[7], challenges[9], challenges[10], challenges[11]]
-#     },
-#     'animal': {
-#         'Appropriate Breeding': [challenges[12], challenges[20], challenges[21], challenges[22]],
-#         'Transportation': [challenges[20], challenges[21], challenges[22], challenges[13]],
-#         'Humane Slaughter': [challenges[20], challenges[21], challenges[22]],
-#         'Living Conditions': [challenges[20], challenges[21], challenges[22], challenges[14]],
-#         'Handling': [challenges[20], challenges[21], challenges[22], challenges[15]],
-#         'Proper Nutrition': [challenges[20], challenges[21], challenges[22], challenges[16]],
-#         'Health Management': [challenges[20], challenges[21], challenges[22], challenges[17]],
-#         'Access to Outdoors': [challenges[20], challenges[21], challenges[22], challenges[18]]
-#     },
-#     'human': {
-#         'Sustainable Wages': [challenges[23], challenges[29], challenges[24], challenges[27], challenges[30], challenges[31]],
-#         'Gender Equity/Equality': [challenges[29], challenges[24], challenges[27], challenges[31], challenges[26]],
-#         'No Child Labor': [challenges[23], challenges[29], challenges[24], challenges[31], challenges[26], challenges[28]],
-#         'No Forced Labor': [challenges[23], challenges[29], challenges[24], challenges[27], challenges[31], challenges[28]],
-#         'Small-scale Workers': [challenges[25]],
-#         'Working Conditions': [challenges[24], challenges[29], challenges[28], challenges[27], challenges[30], challenges[31]],
-#         'Cultural Identity': [challenges[30], challenges[26], challenges[25], challenges[27], challenges[31], challenges[28]],
-#         'Community Empowerment': [challenges[23], challenges[29], challenges[24], challenges[25], challenges[30], challenges[28]]
-#     }
-# }
+# hash map from issues to challenges
+issues_challenges = {
+    'environment': {
+        'Environment Regeneration': [challenges[9], challenges[4]],
+        'Reduced Emissions': [challenges[2], challenges[1], challenges[9], challenges[10]],
+        'Conservation': [challenges[3], challenges[1], challenges[11], challenges[0], challenges[6], challenges[9], challenges[11]],
+        'Biodiversity': [challenges[4], challenges[1], challenges[0], challenges[9], challenges[11]],
+        'Waste Management': [challenges[5], challenges[1], challenges[8], challenges[3], challenges[0]],
+        'Water Management': [challenges[6], challenges[1], challenges[0], challenges[3]],
+        'Air Quality': [challenges[7], challenges[1], challenges[2], challenges[10], challenges[11]],
+        'Pollution Reduction': [challenges[8], challenges[0], challenges[6], challenges[5], challenges[7], challenges[9], challenges[10], challenges[11]]
+    },
+    'animal': {
+        'Appropriate Breeding': [challenges[12], challenges[20], challenges[21], challenges[22]],
+        'Transportation': [challenges[20], challenges[21], challenges[22], challenges[13]],
+        'Humane Slaughter': [challenges[20], challenges[21], challenges[22]],
+        'Living Conditions': [challenges[20], challenges[21], challenges[22], challenges[14]],
+        'Handling': [challenges[20], challenges[21], challenges[22], challenges[15]],
+        'Proper Nutrition': [challenges[20], challenges[21], challenges[22], challenges[16]],
+        'Health Management': [challenges[20], challenges[21], challenges[22], challenges[17]],
+        'Access to Outdoors': [challenges[20], challenges[21], challenges[22], challenges[18]]
+    },
+    'human': {
+        'Sustainable Wages': [challenges[23], challenges[29], challenges[24], challenges[27], challenges[30], challenges[31]],
+        'Gender Equity/Equality': [challenges[29], challenges[24], challenges[27], challenges[31], challenges[26]],
+        'No Child Labor': [challenges[23], challenges[29], challenges[24], challenges[31], challenges[26], challenges[28]],
+        'No Forced Labor': [challenges[23], challenges[29], challenges[24], challenges[27], challenges[31], challenges[28]],
+        'Small-scale Workers': [challenges[25]],
+        'Working Conditions': [challenges[24], challenges[29], challenges[28], challenges[27], challenges[30], challenges[31]],
+        'Cultural Identity': [challenges[30], challenges[26], challenges[25], challenges[27], challenges[31], challenges[28]],
+        'Community Empowerment': [challenges[23], challenges[29], challenges[24], challenges[25], challenges[30], challenges[28]]
+    }
+}
 
 
 def get_labels_challenges():
@@ -538,13 +538,12 @@ def get_challenge_desc():
 
 
 def main():
-
-    ref = db.collection(u'relationships').document('challenge_descriptions')
-    challenges_desc = get_challenge_desc()
+    labels_challenges = get_labels_challenges()
+    ref = db.collection(u'relationships').document('labels_challenges')
     ref.set({
-        u'environment': challenges_desc['environment'],
-        u'animal': challenges_desc['animal'],
-        u'human': challenges_desc['human'],
+        u'environment': labels_challenges['environment'],
+        u'animal': labels_challenges['animal'],
+        u'human': labels_challenges['human'],
     })
 
 
