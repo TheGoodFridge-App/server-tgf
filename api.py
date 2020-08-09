@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from firestore import db
+from os import environ
 
 api = Blueprint("api", __name__)
 
@@ -8,6 +9,10 @@ def post_values():
     email = request.args.get('email[]')
     first_name = request.args.get('first_name[]')
     last_name = request.args.get('last_name[]')
+    secret = request.args.get('secret[]')
+
+    if secret != environ.get('APP_SECRET'):
+        return 'Sorry you are not authorized to perform this action', 400
 
     value1 = "true" == request.args.get('environment[]')
     value2 = "true" == request.args.get('animal[]')
@@ -40,6 +45,10 @@ def update_values():
     email = request.args.get('email[]')
     first_name = request.args.get('first_name[]')
     last_name = request.args.get('last_name[]')
+    secret = request.args.get('secret[]')
+
+    if secret != environ.get('APP_SECRET'):
+        return 'Sorry you are not authorized to perform this action', 400
 
     value1 = "true" == request.args.get('environment[]')
     value2 = "true" == request.args.get('animal[]')
@@ -70,7 +79,11 @@ def update_values():
 @api.route('/data', methods=['GET'])
 def get_data():
     email = request.args.get('email')
-
+    secret = request.args.get('secret')
+    
+    if secret != environ.get('APP_SECRET'):
+        return 'Sorry you are not authorized to perform this action', 400
+    
     try:
         ref = db.collection(u'users').document(str(email))
         data = ref.get()

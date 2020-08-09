@@ -1,13 +1,18 @@
 from flask import Blueprint, request
 from firestore import db
 from collections import defaultdict
+from os import environ
 
 challenges = Blueprint("challenges", __name__)
 
 @challenges.route('/from_issues')
 def get_challenges_from_issues():
     issues = request.args.getlist('issues[]')
-    
+    secret = request.args.get('secret[]')
+
+    if secret != environ.get('APP_SECRET'):
+        return 'Sorry you are not authorized to perform this action', 400
+        
     try:
         ref = db.collection(u'relationships')
         docs = ref.stream()
@@ -39,7 +44,11 @@ def get_challenges_from_issues():
 @challenges.route('/from_labels')
 def get_challenges_from_labels():
     labels = request.args.getlist('labels[]')
-    
+    secret = request.args.get('secret[]')
+
+    if secret != environ.get('APP_SECRET'):
+        return 'Sorry you are not authorized to perform this action', 400
+        
     try:
         ref = db.collection(u'relationships')
         docs = ref.stream()
