@@ -95,6 +95,7 @@ def get_descriptions():
         result = {
             "name": challenge
         }
+        print(challenge_descriptions)
         result.update(challenge_descriptions[challenge])
 
         # get the challenges for the issues provided
