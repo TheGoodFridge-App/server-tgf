@@ -119,3 +119,13 @@ def change_name():
     except Exception as e:
         ret = 'Failed with error: ' + str(e)
         return ret, 400
+
+@api.route('get_secret', methods=['GET'])
+def get_secret():
+
+    secret = environ.get('APP_SECRET')
+    if secret:
+        return secret, 200
+    
+    else:
+        return 'No secret found', 400
