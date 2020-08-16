@@ -34,7 +34,11 @@ def post_values():
             u'human': value3,
             u'environment_issues': environment_issues,
             u'animal_issues': animal_issues,
-            u'human_issues': human_issues,
+            u'human_issues': human_issues
+        })
+
+        ref = db.collection(u'users').document(str(email)).collection('challenges').document('challenges')
+        ref.set({
             u'challenges': challenges
         })
         return 'Success', 200
@@ -73,7 +77,11 @@ def update_values():
             u'human': value3,
             u'environment_issues': environment_issues,
             u'animal_issues': animal_issues,
-            u'human_issues': human_issues,
+            u'human_issues': human_issues
+        })
+
+        ref = db.collection(u'users').document(str(email)).collection('challenges').document('challenges')
+        ref.update({
             u'challenges': challenges
         })
         return 'Success', 200
