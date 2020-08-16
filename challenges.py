@@ -1,9 +1,74 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
+import json
+import random
+import requests
 from firestore import db
 from collections import defaultdict
 from os import environ
 
 challenges = Blueprint("challenges", __name__)
+
+@challenges.route('/get', methods=['GET'])
+def get_user_challenges():
+    email = request.args.get('email')
+    secret = request.args.get('secret')
+
+    if secret != environ.get('APP_SECRET'):
+        return "Sorry you are not authorized to perform this action", 400
+
+    try:
+        ref = db.collection(u'users').document(str(email)).collection('challenges').document('challenges')
+        data = ref.get().to_dict()
+
+        challenges = data['challenges']
+
+        if len(challenges) == 3:
+            return jsonify(challenges), 200
+
+        elif len(challenges) < 3:
+            return add_challenges(str(email), data)
+
+    except Exception as e:
+        print(e)
+        ret = 'Failed with error: ' + str(e)
+        return ret, 400
+
+def add_challenges(email, challenge_data):
+    ref = db.collection(u'users').document(email)
+    data = ref.get().to_dict()
+
+    issues = data['animal_issues'] + data['environment_issues'] + data['human_issues']
+    #get challenges for the issues above (could cause problems if not multi-threaded but lets see)
+    response = requests.get(
+        'https://the-good-fridge.herokuapp.com/challenges/from_issues',
+        params={'issues[]': issues, 'secret[]': environ.get('APP_SECRET')},
+    )
+
+    all_challenges = json.loads(response.content)['challenges']
+    ongoing_and_completed_challenges = challenge_data['challenges'] + challenge_data['history']
+    new_challenges_needed = 3 - len(challenge_data['challenges'])
+
+    undone_challenges = [challenge for challenge in all_challenges if challenge not in ongoing_and_completed_challenges]
+    challenges = challenge_data['challenges']
+
+    for i in range(new_challenges_needed):
+        new_challenge = undone_challenges[random.randint(0, len(undone_challenges))]
+        
+        challenges += [new_challenge]
+        # challenges += [{}.update({
+        #     new_challenge: {'current': 0, 'level': 1}
+        # })]
+
+        del undone_challenges[undone_challenges.index(new_challenge)]
+
+    ref = db.collection(u'users').document(email).collection('challenges').document('challenges')
+    ref.set({
+        'challenges': challenges,
+        'history': challenge_data['history']
+    })
+
+    return jsonify(challenges)
+    
 
 @challenges.route('/from_issues')
 def get_challenges_from_issues():
