@@ -39,8 +39,10 @@ def post_values():
 
         ref = db.collection(u'users').document(str(email)).collection('challenges').document('challenges')
         ref.set({
-            u'challenges': challenges
+            u'challenges': challenges,
+            u'history': []
         })
+
         return 'Success', 200
 
     except Exception as e:
