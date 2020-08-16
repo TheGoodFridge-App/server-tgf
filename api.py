@@ -22,6 +22,7 @@ def post_values():
     environment_issues = request.args.getlist('environment_issues[]')
     animal_issues = request.args.getlist('animal_issues[]')
     human_issues = request.args.getlist('human_issues[]')
+    challenges = request.args.getlist('challenges[]')
 
     try:
         ref = db.collection(u'users').document(str(email))
@@ -33,7 +34,8 @@ def post_values():
             u'human': value3,
             u'environment_issues': environment_issues,
             u'animal_issues': animal_issues,
-            u'human_issues': human_issues
+            u'human_issues': human_issues,
+            u'challenges': challenges
         })
         return 'Success', 200
 
@@ -59,6 +61,7 @@ def update_values():
     environment_issues = request.args.getlist('environment_issues[]')
     animal_issues = request.args.getlist('animal_issues[]')
     human_issues = request.args.getlist('human_issues[]')
+    challenges = requets.args.getlist('challenges[]')
 
     try:
         ref = db.collection(u'users').document(str(email))
@@ -70,7 +73,8 @@ def update_values():
             u'human': value3,
             u'environment_issues': environment_issues,
             u'animal_issues': animal_issues,
-            u'human_issues': human_issues
+            u'human_issues': human_issues,
+            u'challenges': challenges
         })
         return 'Success', 200
 
@@ -83,10 +87,10 @@ def update_values():
 def get_data():
     email = request.args.get('email')
     secret = request.args.get('secret')
-    
+
     if secret != environ.get('APP_SECRET'):
         return 'Sorry you are not authorized to perform this action', 400
-    
+
     try:
         ref = db.collection(u'users').document(str(email))
         data = ref.get()
@@ -97,6 +101,7 @@ def get_data():
         ret = 'Failed with error: ' + str(e)
         return ret, 400
 
+
 @api.route('/change_name', methods=['PUT', 'POST'])
 def change_name():
     email = request.args.get('email')
@@ -106,7 +111,7 @@ def change_name():
 
     if secret != environ.get('APP_SECRET'):
         return 'Sorry you are not authorized to perform this action', 400
-    
+
     try:
         ref = db.collection(u'users').document(str(email))
         ref.update({
@@ -120,12 +125,13 @@ def change_name():
         ret = 'Failed with error: ' + str(e)
         return ret, 400
 
+
 @api.route('get_secret', methods=['GET'])
 def get_secret():
 
     secret = environ.get('APP_SECRET')
     if secret:
         return secret, 200
-    
+
     else:
         return 'No secret found', 400

@@ -441,7 +441,7 @@ def get_challenge_desc():
                 impact: ["You are supporting farmers who select and breed animals who are suited to a more natural life and optimal health",
                          "You are supporting the prohibition of cloned or genetically engineered animals as they are a great risk to animal health"]
             },
-            "Transportation Tacticians": {
+            "Transport Tactitian": {
                 description: "A Transportation Tactician supports humane transportation of farm animals. They understand that transportation can be very stressful for animals as they usually are deprived of food, water, and bedding.",
                 impact: ["You are supporting humane treatment of animals during transportation, free from risks of stress, injury and diseases",
                          "You are helping animals to have adequate space and room during their transportations"]
@@ -456,7 +456,7 @@ def get_challenge_desc():
                 impact: ["You are supporting farms to handle their animals with care at all times",
                          "You are helping the farm animals to experience less pain and distress during their lives on the farm"]
             },
-            "Nutrition Nourishers": {
+            "Nutrition Nourisher": {
                 description: "Nutrition Nourishers support farms that ensure animals are fed a diet that is optimal for their health.",
                 impact: ["You are helping to ensure that animals are fed food that are optimal for their health and wellbeing",
                          "You are also supporting farms that allow the animals to express natural behaviors and eat the food they prefer the way they adapted to eating it"]
@@ -538,12 +538,12 @@ def get_challenge_desc():
 
 
 def main():
-    labels_challenges = get_labels_challenges()
-    ref = db.collection(u'relationships').document('labels_challenges')
+    challenge_descriptions = get_challenge_desc()
+    ref = db.collection(u'relationships').document('challenge_descriptions')
     ref.set({
-        u'environment': labels_challenges['environment'],
-        u'animal': labels_challenges['animal'],
-        u'human': labels_challenges['human'],
+        u'environment': challenge_descriptions['environment'],
+        u'animal': challenge_descriptions['animal'],
+        u'human': challenge_descriptions['human'],
     })
 
 
