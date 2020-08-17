@@ -190,48 +190,50 @@ formatted_challenges = {
 }
 
 challenges_map = {
-    "environment": [
-        'Seafood Star',  # 0
-        'Sustainability Superhero',
-        'Emissions Slasher',
-        'Conservation Champion',
-        'Battle for Biodiversity',
-        'Waste Warrior',
-        'Water Guardian',
-        'Air Guardian Angel',
-        'Fight Against Toxins',
-        'Patron for Regeneration',
-        'Dairy Delight',  # 10
-        'Conserve with Coffee'
-    ],
-    "animal": [
-        'Leaders for Breeders',
-        'Transport Tactitian',
-        'Habitat Heroes',
-        'Humane Handlers',
-        'Nutrition Nourisher',
-        'Health Managers',
-        'Friends for Freedom',
-        'Ethical Eggs',
-        'Battle for Beef',  # 20
-        'Convert the Chicken',
-        'Turkey Tactics',
-    ],
-    "human": [
-        'Coffee Connoisseur',
-        'Chocolate Challenge',
-        'Local Lover',
-        'Flower Fairy',
-        'Better Bananas',
-        'Responsible Rockstar',
-        'Tea Trustee',
-        'Tomato Taster',  # 30
-        'Spice Savior'
-    ]
+    "environment": {
+        'Seafood Star': [1, 2, 4],
+        'Sustainability Superhero': [3, 6, 10],
+        'Emissions Slasher': [2, 4, 6],
+        'Conservation Champion': [3, 5, 8],
+        'Battle for Biodiversity': [3, 5, 8],
+        'Waste Warrior': [2, 4, 6],
+        'Water Guardian': [3, 5, 7],
+        'Air Guardian Angel': [2, 4, 6],
+        'Fight Against Toxins': [3, 5, 7],
+        'Patron for Regeneration': [1, 2, 4],
+        'Dairy Delight': [2, 4, 6],  # 10
+        'Conserve with Coffee': [1, 2, 3]
+    },
+    "animal": {
+        'Leaders for Breeders': [2, 4, 6],
+        'Transport Tactitian': [3, 6, 8],
+        'Habitat Heroes': [1, 2, 3],
+        'Humane Handlers': [2, 4, 6],
+        'Nutrition Nourisher': [1, 2, 3],
+        'Health Managers': [1, 2, 3],
+        'Friends for Freedom': [3, 6, 8],
+        'Ethical Eggs': [2, 4, 6],
+        'Battle for Beef': [2, 4, 6],  # 20
+        'Convert the Chicken': [2, 4, 6],
+        'Turkey Tactics': [2, 4, 6],
+    },
+    "human": {
+        'Convert the Chicken': [2, 4, 6],
+        'Turkey Tactics': [2, 4, 6],
+        'Coffee Connoisseur': [1, 2, 4],
+        'Chocolate Challenge': [1, 2, 4],
+        'Local Lover': [2, 4, 6],
+        'Flower Fairy': [2, 4, 6],
+        'Better Bananas': [1, 2, 4],
+        'Responsible Rockstar': [2, 4, 6],
+        'Tea Trustee': [1, 2, 4],
+        'Tomato Taster': [1, 2, 4],  # 30
+        'Spice Savior': [2, 4, 6]
+    }
 }
 
 challenges = [
-    'Seafood Star',  # 0
+    'Seafood Star',
     'Sustainability Superhero',
     'Emissions Slasher',
     'Conservation Champion',
@@ -538,12 +540,12 @@ def get_challenge_desc():
 
 
 def main():
-    challenge_descriptions = get_challenge_desc()
-    ref = db.collection(u'relationships').document('challenge_descriptions')
+    ref = db.collection(u'relationships').document('challenges')
     ref.set({
-        u'environment': challenge_descriptions['environment'],
-        u'animal': challenge_descriptions['animal'],
-        u'human': challenge_descriptions['human'],
+        u'environment': challenges_map['environment'],
+        u'animal': challenges_map['animal'],
+        u'human': challenges_map['human']
+        
     })
 
 
