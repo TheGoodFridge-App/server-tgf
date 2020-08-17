@@ -46,7 +46,7 @@ def post_grocery():
                 u'grocery_list': g_list,
             })
         ref = db.collection(u'users').document(str(email)).collection('groceries').document('purchased')
-        ref.set({ 'dummy': 'dummy' })
+        ref.set({ })
         else:
             raise Exception('Empty grocery list')
         
