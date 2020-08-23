@@ -37,9 +37,16 @@ def post_values():
             u'human_issues': human_issues
         })
 
+        challenge_map = {}
+        for challenge in challenges:
+            challenge_map[challenge] = {
+                u'current': 0,
+                u'level': 1
+            }
+
         ref = db.collection(u'users').document(str(email)).collection('challenges').document('challenges')
         ref.set({
-            u'challenges': challenges,
+            u'challenges': challenge_map,
             u'history': []
         })
 
