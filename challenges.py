@@ -52,7 +52,8 @@ def add_challenges(email, challenge_data):
 
     all_challenges = json.loads(response.content)['challenges']
     print(all_challenges)
-    ongoing_and_completed_challenges = challenge_data['challenges'] + challenge_data['history']
+    challenge_arr = challenge_data['challenges'].keys()
+    ongoing_and_completed_challenges = challenge_arr + challenge_data['history']
     new_challenges_needed = 3 - len(challenge_data['challenges'])
 
     undone_challenges = [challenge for challenge in all_challenges if challenge not in ongoing_and_completed_challenges]
