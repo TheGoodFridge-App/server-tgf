@@ -39,7 +39,7 @@ def post_values():
         })
 
         challenge_map = {}
-        for i, challenge in enumerated(challenges):
+        for i, challenge in enumerate(challenges):
             challenge_map[challenge] = {
                 u'current': 0,
                 u'level': 1,
