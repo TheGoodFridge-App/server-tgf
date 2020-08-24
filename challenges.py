@@ -52,7 +52,7 @@ def add_challenges(email, challenge_data):
 
     all_challenges = json.loads(response.content)['challenges']
     print(all_challenges)
-    challenge_arr = challenge_data['challenges'].keys()
+    challenge_arr = list(challenge_data['challenges'].keys())
     ongoing_and_completed_challenges = challenge_arr + challenge_data['history']
     new_challenges_needed = 3 - len(challenge_data['challenges'])
 
