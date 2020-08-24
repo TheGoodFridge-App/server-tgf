@@ -78,7 +78,7 @@ def add_challenges(email, challenge_data):
         'history': challenge_data['history']
     })
 
-    return jsonify(challenges)
+    return challenges
     
 @challenges.route('/completed', methods=['GET'])
 def get_completed_challenges():
