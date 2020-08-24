@@ -30,7 +30,8 @@ def get_user_challenges():
             formatted_challenges.append({
                 'name': challenge,
                 'current': challenges[challenge]['current'],
-                'level': challenges[challenge]['level']
+                'level': challenges[challenge]['level'],
+                'value': challenges[challenge]['value']
             })
         return jsonify({'challenges': formatted_challenges}), 200
 

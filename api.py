@@ -23,6 +23,7 @@ def post_values():
     animal_issues = request.args.getlist('animal_issues[]')
     human_issues = request.args.getlist('human_issues[]')
     challenges = request.args.getlist('challenges[]')
+    challenge_values = request.args.getlist('challenge_values[]')
 
     try:
         ref = db.collection(u'users').document(str(email))
@@ -38,10 +39,11 @@ def post_values():
         })
 
         challenge_map = {}
-        for challenge in challenges:
+        for i, challenge in enumerated(challenges):
             challenge_map[challenge] = {
                 u'current': 0,
-                u'level': 1
+                u'level': 1,
+                u'value': challenge_values[i]
             }
 
         ref = db.collection(u'users').document(str(email)).collection('challenges').document('challenges')
@@ -75,6 +77,7 @@ def update_values():
     animal_issues = request.args.getlist('animal_issues[]')
     human_issues = request.args.getlist('human_issues[]')
     challenges = requets.args.getlist('challenges[]')
+    challenge_values = request.args.getlist('challenge_values[]')
 
     try:
         ref = db.collection(u'users').document(str(email))
@@ -90,10 +93,11 @@ def update_values():
         })
 
         challenge_map = {}
-        for challenge in challenges:
+        for i, challenge in enumerated(challenges):
             challenge_map[challenge] = {
                 u'current': 0,
-                u'level': 1
+                u'level': 1,
+                u'value': challenge_values[i]
             }
 
         ref = db.collection(u'users').document(str(email)).collection('challenges').document('challenges')
