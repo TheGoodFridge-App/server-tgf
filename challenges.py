@@ -22,11 +22,17 @@ def get_user_challenges():
 
         challenges = data['challenges']
 
-        if len(challenges) == 3:
-            return jsonify(challenges), 200
-
-        elif len(challenges) < 3:
-            return add_challenges(str(email), data)
+        if len(challenges) < 3:
+            challenges = add_challenges(str(email), data)
+            
+        formatted_challenges = []
+        for challenge in challenges:
+            formatted_challenges.append({
+                'name': challenge,
+                'current': challenges[challenge]['current'],
+                'level': challenges[challenge]['level']
+            })
+        return jsonify({'challenges': formatted_challenges}), 200
 
     except Exception as e:
         print(e)
@@ -69,6 +75,25 @@ def add_challenges(email, challenge_data):
 
     return jsonify(challenges)
     
+@challenges.route('/completed', methods=['GET'])
+def get_completed_challenges():
+    email = request.args.get('email')
+    secret = request.args.get('secret')
+
+    if secret != environ.get('APP_SECRET'):
+        return "Sorry you are not authorized to perform this action", 400
+
+    try:
+        ref = db.collection(u'users').document(str(email)).collection('challenges').document('challenges')
+        data = ref.get().to_dict()
+
+        history = data['history']
+        return {'history': history}
+
+    except Exception as e:
+        print(e)
+        ret = 'Failed with error: ' + str(e)
+        return ret, 400
 
 @challenges.route('/from_issues')
 def get_challenges_from_issues():
@@ -182,3 +207,4 @@ def get_descriptions():
         print(e)
         ret = 'Failed with error: ' + str(e)
         return ret, 400
+
