@@ -24,7 +24,7 @@ def get_user_challenges():
 
         if len(challenges) < 3:
             challenges = add_challenges(str(email), data)
-            
+
         formatted_challenges = []
         for challenge in challenges:
             formatted_challenges.append({
@@ -51,6 +51,7 @@ def add_challenges(email, challenge_data):
     )
 
     all_challenges = json.loads(response.content)['challenges']
+    print(all_challenges)
     ongoing_and_completed_challenges = challenge_data['challenges'] + challenge_data['history']
     new_challenges_needed = 3 - len(challenge_data['challenges'])
 
