@@ -25,13 +25,23 @@ def get_user_challenges():
         if len(challenges) < 3:
             challenges = add_challenges(str(email), data)
 
+        # Get current total based on level
+        ref = db.collection(u'relationships').document('challenges')
+        data = ref.get().to_dict()
+        challenge_metadata = {}
+        for value in ['environment', 'animal', 'human']:
+            challenge_metadata.update(dict(data[value]))
+
         formatted_challenges = []
         for challenge in challenges:
+            level = challenges[challenge]['level']
+            level_total = challenge_metadata[challenge][level - 1]
             formatted_challenges.append({
                 'name': challenge,
                 'current': challenges[challenge]['current'],
-                'level': challenges[challenge]['level'],
-                'value': challenges[challenge]['value']
+                'level': level,
+                'value': challenges[challenge]['value'],
+                'level_total': level_total
             })
         return jsonify({'challenges': formatted_challenges}), 200
 
