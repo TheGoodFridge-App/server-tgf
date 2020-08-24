@@ -57,7 +57,7 @@ def add_challenges(email, challenge_data):
     new_challenges_needed = 3 - len(challenge_arr)
 
     undone_challenges = [challenge for challenge in all_challenges if challenge not in ongoing_and_completed_challenges]
-    challenges = challenge_data['challenges']
+    challenges = dict(challenge_data['challenges'])
 
     for i in range(new_challenges_needed):
         new_challenge = undone_challenges[random.randint(0, len(undone_challenges))]
