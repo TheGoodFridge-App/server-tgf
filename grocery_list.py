@@ -80,15 +80,8 @@ def update_grocery():
             })
         else:
             raise Exception('Empty grocery list')
-        
-        recommendations, other = check_grocery(g_list)
 
-        grocery_dict = {
-            "recommendations": recommendations,
-            "other": other
-        }
-
-        return grocery_dict, 200
+        return g_list, 200
 
     except Exception as e:
         ret = 'Failed with error: ' + str(e)
