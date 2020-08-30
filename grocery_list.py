@@ -63,6 +63,37 @@ def post_grocery():
         ret = 'Failed with error: ' + str(e)
         return ret, 400
 
+@grocery_list.route('/update', methods=['PUT'])
+def update_grocery():
+    email = request.args.get('email[]')
+    g_list = request.args.getlist('items[]')
+    secret = request.args.get('secret[]')
+
+    if secret != environ.get('APP_SECRET'):
+        return 'Sorry you are not authorized to perform this action', 400
+    
+    try:
+        ref = db.collection(u'users').document(str(email)).collection('groceries').document('grocery_list')
+        if g_list:
+            ref.update({
+                u'grocery_list': g_list,
+            })
+        else:
+            raise Exception('Empty grocery list')
+        
+        recommendations, other = check_grocery(g_list)
+
+        grocery_dict = {
+            "recommendations": recommendations,
+            "other": other
+        }
+
+        return grocery_dict, 200
+
+    except Exception as e:
+        ret = 'Failed with error: ' + str(e)
+        return ret, 400
+
 def check_grocery(g_list):
     recommendations = defaultdict(list)
 
