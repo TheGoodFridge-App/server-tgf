@@ -2,13 +2,18 @@ from flask import Blueprint, request
 from os import path
 from collections import defaultdict
 from firestore import db
+from os import environ
 
 grocery_list = Blueprint("grocery_list", __name__)
 
 @grocery_list.route('/get', methods=['GET'])
 def get_grocery():
     email = request.args.get('email')
+    secret = request.args.get('secret')
 
+    if secret != environ.get('APP_SECRET'):
+        return 'Sorry you are not authorized to perform this action', 400
+    
     try:
         ref = db.collection(u'users').document(str(email)).collection('groceries')
         docs = ref.stream()
@@ -29,13 +34,19 @@ def get_grocery():
 def post_grocery():
     email = request.args.get('email[]')
     g_list = request.args.getlist('items[]')
+    secret = request.args.get('secret[]')
 
+    if secret != environ.get('APP_SECRET'):
+        return 'Sorry you are not authorized to perform this action', 400
+    
     try:
         ref = db.collection(u'users').document(str(email)).collection('groceries').document('grocery_list')
         if g_list:
             ref.set({
-                u'grocery_list': g_list
+                u'grocery_list': g_list,
             })
+            ref = db.collection(u'users').document(str(email)).collection('groceries').document('purchased')
+            ref.set({ })
         else:
             raise Exception('Empty grocery list')
         
@@ -47,6 +58,30 @@ def post_grocery():
         }
 
         return grocery_dict, 200
+
+    except Exception as e:
+        ret = 'Failed with error: ' + str(e)
+        return ret, 400
+
+@grocery_list.route('/update', methods=['PUT'])
+def update_grocery():
+    email = request.args.get('email[]')
+    g_list = request.args.getlist('items[]')
+    secret = request.args.get('secret[]')
+
+    if secret != environ.get('APP_SECRET'):
+        return 'Sorry you are not authorized to perform this action', 400
+    
+    try:
+        ref = db.collection(u'users').document(str(email)).collection('groceries').document('grocery_list')
+        if g_list:
+            ref.update({
+                u'grocery_list': g_list,
+            })
+        else:
+            raise Exception('Empty grocery list')
+
+        return g_list, 200
 
     except Exception as e:
         ret = 'Failed with error: ' + str(e)
@@ -85,7 +120,11 @@ def purchased():
     email = request.args.get('email')
     product = request.args.get('product')
     brand = request.args.get('brand')
+    secret = request.args.get('secret')
 
+    if secret != environ.get('APP_SECRET'):
+        return 'Sorry you are not authorized to perform this action', 400
+    
     try:
         ref = db.collection(u'users').document(email).collection('groceries').document('purchased')
 
