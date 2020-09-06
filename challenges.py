@@ -5,8 +5,50 @@ import requests
 from firestore import db
 from collections import defaultdict
 from os import environ
+import subprocess
 
 challenges = Blueprint("challenges", __name__)
+
+'''
+will be fired when the users will put a product that has been purchased
+-- take that product, find labels corresponding to it with web scraping algo
+-- find challenges correspoding to the labels found
+    -- if any challenges found match the user's challenges then increase the count or level
+        -- increase level if any
+    -- return challenges that have been level up or completed
+    -- if any challenge is completed then send in a new challenge
+'''
+@challenges.route('/update', methods=['PUT', 'POST'])
+def update_user_challenges():
+    email = request.args.get('email')
+    secret = request.args.get('secret')
+    product = request.args.get('product')
+    brand = request.args.get('brand')
+
+    if secret != environ.get('APP_SECRET'):
+        return "Sorry you are not authorized to perform this action", 400
+
+    labels = []
+
+    subprocess.call(['sh', './run-label-scraping.sh', brand])
+    with open('labels.txt', encoding='utf-8') as file:
+        l = file.read()
+        labels += l
+
+    response = requests.get('https://the-good-fridge.herokuapp.com/challenges/from_issues',
+        params={'labels[]': labels, 'secret[]': environ.get('APP_SECRET')},
+    )
+    challenges = response["challenges"]
+
+    ref = db.collection('users').document(str(email)).collection('challenges').document('challenges')
+    user_data = ref.get().to_dict()
+    user_challenges = user_data.keys()
+
+    overlapping_challenges = [challenge for challenge in challenges if challenges in user_challenges]
+
+    
+
+    return labels, 200
 
 @challenges.route('/get', methods=['GET'])
 def get_user_challenges():
