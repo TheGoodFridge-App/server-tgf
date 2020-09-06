@@ -117,7 +117,7 @@ def checkLabelsFromCSV(label_name, company_name, col_num):
     elif label_name == "USDA Organic":
         file = "usda-organic.csv"
 
-    with open(file) as csv_file:
+    with open(file, encoding='utf-8') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         for row in csv_reader:
             if row[col_num] == company_name:
