@@ -153,6 +153,26 @@ def change_name():
         ret = 'Failed with error: ' + str(e)
         return ret, 400
 
+@api.route('/image/update', methods=['PUT'])
+def update_profile():
+    email = request.args.get('email')
+    image_url = request.args.get('image_url')
+    secret = request.args.get('secret')
+
+    if secret != environ.get('APP_SECRET'):
+        return 'Sorry you are not authorized to perform this action', 400
+
+    try:
+        ref = db.collection(u'users').document(str(email))
+        ref.update({
+            u'image_url': image_url
+        })
+
+        return 'Success', 200
+
+    except Exception as e:
+        ret = 'Failed with error: ' + str(e)
+        return ret, 400
 
 @api.route('get_secret', methods=['GET'])
 def get_secret():
