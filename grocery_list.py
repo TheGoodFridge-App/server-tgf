@@ -42,11 +42,12 @@ def post_grocery():
     try:
         ref = db.collection(u'users').document(str(email)).collection('groceries').document('grocery_list')
         if g_list:
-            ref.set({
-                u'grocery_list': g_list,
-            })
-            ref = db.collection(u'users').document(str(email)).collection('groceries').document('purchased')
-            ref.set({ })
+            if request.method == 'POST':
+                ref.set({
+                    u'grocery_list': g_list,
+                })
+                ref = db.collection(u'users').document(str(email)).collection('groceries').document('purchased')
+                ref.set({ })
         else:
             raise Exception('Empty grocery list')
         
