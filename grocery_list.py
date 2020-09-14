@@ -30,7 +30,7 @@ def get_grocery():
         ret = 'Failed with error: ' + str(e)
         return ret, 400
 
-@grocery_list.route('/', methods=['GET', 'POST'])
+@grocery_list.route('/', methods=['GET', 'POST', 'PUT'])
 def post_grocery():
     email = request.args.get('email[]')
     g_list = request.args.getlist('items[]')
@@ -82,7 +82,14 @@ def update_grocery():
         else:
             raise Exception('Empty grocery list')
 
-        return g_list, 200
+        recommendations, other = check_grocery(g_list)
+
+        grocery_dict = {
+            "recommendations": recommendations,
+            "other": other
+        }
+
+        return grocery_dict, 200
 
     except Exception as e:
         ret = 'Failed with error: ' + str(e)
