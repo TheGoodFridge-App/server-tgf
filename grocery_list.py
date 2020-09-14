@@ -41,7 +41,7 @@ def post_grocery():
     
     try:
         ref = db.collection(u'users').document(str(email)).collection('groceries').document('grocery_list')
-        purchased = []
+        purchased = {}
         if g_list:
             if request.method == 'POST':
                 ref.set({
