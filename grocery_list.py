@@ -93,7 +93,7 @@ def update_grocery():
 
         grocery_dict = {
             "recommendations": recommendations,
-            "other": other
+            "other": other,
             "purchased": purchased
         }
 
