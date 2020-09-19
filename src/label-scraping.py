@@ -113,9 +113,9 @@ def check_label(url, regex, label_name, company_name, string_to_delete_before, s
 
 def checkLabelsFromCSV(label_name, company_name, col_num):
     if label_name == "Food Alliance":
-        file = "Food-Alliance-Certified.csv"
+        file = "src/Food-Alliance-Certified.csv"
     elif label_name == "USDA Organic":
-        file = "usda-organic.csv"
+        file = "src/usda-organic.csv"
 
     with open(file, encoding='utf-8') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
