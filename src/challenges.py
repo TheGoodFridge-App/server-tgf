@@ -28,26 +28,71 @@ def update_user_challenges():
     if secret != environ.get('APP_SECRET'):
         return "Sorry you are not authorized to perform this action", 400
 
-    labels = []
+    labels = ['American Humane Certified']
 
-    subprocess.call(['sh', '../run-label-scraping.sh', brand])
-    with open('labels.txt', encoding='utf-8') as file:
-        l = file.read()
-        labels += l
-
-    response = requests.get('https://the-good-fridge.herokuapp.com/challenges/from_issues',
+    # subprocess.call(['sh', 'src/run-label-scraping.sh', brand])
+    # with open('src/labels.txt') as file:
+    #     l = file.readlines()
+    #     labels += l
+    
+    #get challenges related to the labels
+    response = requests.get('https://the-good-fridge.herokuapp.com/challenges/from_labels',
         params={'labels[]': labels, 'secret[]': environ.get('APP_SECRET')},
     )
-    challenges = json.loads(response.content)["challenges"]
+    challenges = list(json.loads(response.content).values())[0]
 
+    #get the user's data to find overlapping challenges and update if any
     ref = db.collection('users').document(str(email)).collection('challenges').document('challenges')
     user_data = ref.get().to_dict()
-    user_challenges = user_data.keys()
-
-    overlapping_challenges = [challenge for challenge in challenges if challenges in user_challenges]
-
+    user_challenges = list(user_data["challenges"].keys())
     
-    return {labels, overlapping_challenges}, 200
+    #get overlapping challenges so we know what to update
+    overlapping_challenges = [challenge for challenge in challenges if challenge in user_challenges]
+
+    if not overlapping_challenges:
+        return user_data, 200
+
+    ref = db.collection('relationships').document('challenges')
+    data = ref.get().to_dict()
+    challenges_info = {}
+
+    #combine everthing into a single top level challenge to values map
+    for key in data.keys():
+        challenges_info.update(data[key])
+
+    leveled_up_challenges = []
+    completed_challenges = []
+
+    #do the actual updating
+    for challenge in overlapping_challenges:
+        levels_info = challenges_info[challenge]
+        user_data["challenges"][challenge]["current"] += 1
+
+        #level up the challenge
+        if user_data["challenges"][challenge]["current"] in levels_info:
+            #if level < total levels then just update the level
+            if user_data["challenges"][challenge]["level"] != len(levels_info):
+                user_data["challenges"][challenge]["level"] += 1
+                leveled_up_challenges.append(challenge)
+
+            #else remove the challenge because it has been completed
+            else:
+                del user_data["challenges"][challenge]
+                completed_challenges.append(challenge)
+                user_data["history"].append(challenge)
+
+    print("overlapping challenges =", overlapping_challenges)
+    print(user_data)
+    print("leveled up =", leveled_up_challenges)
+    print("completed =", completed_challenges)
+
+    #update firestore with updated info
+    ref = db.collection('users').document(str(email)).collection('challenges').document('challenges')
+    ref.update(user_data)
+
+    #clarify if you should do the GET request when one of the challenges is completed or eugene on ios
+
+    return {"leveled_up": leveled_up_challenges, "completed": completed_challenges}, 200
 
 @challenges.route('/get', methods=['GET'])
 def get_user_challenges():
