@@ -41,12 +41,17 @@ def post_grocery():
     
     try:
         ref = db.collection(u'users').document(str(email)).collection('groceries').document('grocery_list')
+        purchased = {}
         if g_list:
-            ref.set({
-                u'grocery_list': g_list,
-            })
-            ref = db.collection(u'users').document(str(email)).collection('groceries').document('purchased')
-            ref.set({ })
+            if request.method == 'POST':
+                ref.set({
+                    u'grocery_list': g_list,
+                })
+                ref = db.collection(u'users').document(str(email)).collection('groceries').document('purchased')
+                ref.set({ })
+            elif request.method  == 'GET':
+                ref = db.collection(u'users').document(str(email)).collection('groceries').document('purchased')
+                purchased = ref.get().to_dict()
         else:
             raise Exception('Empty grocery list')
         
@@ -54,7 +59,8 @@ def post_grocery():
 
         grocery_dict = {
             "recommendations": recommendations,
-            "other": other
+            "other": other,
+            "purchased": purchased
         }
 
         return grocery_dict, 200
@@ -81,7 +87,17 @@ def update_grocery():
         else:
             raise Exception('Empty grocery list')
 
-        return g_list, 200
+        recommendations, other = check_grocery(g_list)
+        ref = db.collection(u'users').document(str(email)).collection('groceries').document('purchased')
+        purchased = ref.get().to_dict()
+
+        grocery_dict = {
+            "recommendations": recommendations,
+            "other": other,
+            "purchased": purchased
+        }
+
+        return grocery_dict, 200
 
     except Exception as e:
         ret = 'Failed with error: ' + str(e)
