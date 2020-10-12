@@ -9,32 +9,23 @@ import subprocess
 
 challenges = Blueprint("challenges", __name__)
 
-'''
-will be fired when the users will put a product that has been purchased
--- take that product, find labels corresponding to it with web scraping algo
--- find challenges correspoding to the labels found
-    -- if any challenges found match the user's challenges then increase the count or level
-        -- increase level if any
-    -- return challenges that have been level up or completed
-    -- if any challenge is completed then send in a new challenge
-'''
 @challenges.route('/update', methods=['PUT', 'POST'])
 def update_user_challenges():
     email = request.args.get('email')
     secret = request.args.get('secret')
-    product = request.args.get('product')
-    brand = request.args.get('brand')
 
     if secret != environ.get('APP_SECRET'):
         return "Sorry you are not authorized to perform this action", 400
 
-    labels = ['American Humane Certified']
+    brand = str(request.args.get('brand'))
 
-    # subprocess.call(['sh', 'src/run-label-scraping.sh', brand])
-    # with open('src/labels.txt') as file:
-    #     l = file.readlines()
-    #     labels += l
-    
+    labels = []
+    ref = db.collection('products_associated_with_labels').where(brand[0], u'array_contains', brand)
+
+    docs = ref.stream()
+    for doc in docs:
+        labels.append(doc.id)
+
     #get challenges related to the labels
     response = requests.get('https://the-good-fridge.herokuapp.com/challenges/from_labels',
         params={'labels[]': labels, 'secret[]': environ.get('APP_SECRET')},
@@ -81,16 +72,9 @@ def update_user_challenges():
                 completed_challenges.append(challenge)
                 user_data["history"].append(challenge)
 
-    print("overlapping challenges =", overlapping_challenges)
-    print(user_data)
-    print("leveled up =", leveled_up_challenges)
-    print("completed =", completed_challenges)
-
     #update firestore with updated info
     ref = db.collection('users').document(str(email)).collection('challenges').document('challenges')
     ref.update(user_data)
-
-    #clarify if you should do the GET request when one of the challenges is completed or eugene on ios
 
     return {"leveled_up": leveled_up_challenges, "completed": completed_challenges}, 200
 
@@ -309,4 +293,3 @@ def get_descriptions():
         print(e)
         ret = 'Failed with error: ' + str(e)
         return ret, 400
-
