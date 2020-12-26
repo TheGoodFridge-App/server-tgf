@@ -118,6 +118,7 @@ def get_user_challenges():
     except Exception as e:
         print(e)
         ret = 'Failed with error: ' + str(e)
+        print(ret)
         return ret, 400
 
 def add_challenges(email, challenge_data):
