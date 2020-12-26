@@ -31,8 +31,6 @@ def update_user_challenges():
         params={'labels[]': labels, 'secret[]': environ.get('APP_SECRET')},
     )
     challenges = list(json.loads(response.content).values())
-    print(challenges)
-    challenges = challenges[0]
 
     #get the user's data to find overlapping challenges and update if any
     ref = db.collection('users').document(str(email)).collection('challenges').document('challenges')
