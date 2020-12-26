@@ -104,16 +104,19 @@ def get_user_challenges():
         print(data)
         for value in ['environment', 'animal', 'human']:
             challenge_metadata.update(dict(data[value]))
-        print(challenge_metadata)
+
         formatted_challenges = []
         for challenge in challenges:
             level = challenges[challenge]['level']
             level_total = challenge_metadata[challenge][level - 1]
+            value = ''
+            if 'value' in challenges[challenge]:
+                value = challenges[challenge]['value']
             formatted_challenges.append({
                 'name': challenge,
                 'current': challenges[challenge]['current'],
                 'level': level,
-                'value': challenges[challenge]['value'],
+                'value': value,
                 'level_total': level_total
             })
         print(formatted_challenges)
