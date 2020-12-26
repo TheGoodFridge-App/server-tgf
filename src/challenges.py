@@ -96,12 +96,12 @@ def get_user_challenges():
 
         if len(challenges) < 3:
             challenges = add_challenges(str(email), data)
-        print(challenges)
+
         # Get current total based on level
         ref = db.collection(u'relationships').document('challenges')
         data = ref.get().to_dict()
         challenge_metadata = {}
-        print(data)
+
         for value in ['environment', 'animal', 'human']:
             challenge_metadata.update(dict(data[value]))
 
@@ -119,13 +119,12 @@ def get_user_challenges():
                 'value': value,
                 'level_total': level_total
             })
-        print(formatted_challenges)
+
         return jsonify({'challenges': formatted_challenges}), 200
 
     except Exception as e:
         print(e)
         ret = 'Failed with error: ' + str(e)
-        print(ret)
         return ret, 400
 
 def add_challenges(email, challenge_data):
@@ -140,7 +139,7 @@ def add_challenges(email, challenge_data):
     )
 
     all_challenges = json.loads(response.content)['challenges']
-    print(all_challenges)
+
     challenge_arr = list(challenge_data['challenges'].keys())
     ongoing_and_completed_challenges = challenge_arr + challenge_data['history']
     new_challenges_needed = 3 - len(challenge_arr)
