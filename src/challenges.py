@@ -104,7 +104,7 @@ def get_user_challenges():
         print(data)
         for value in ['environment', 'animal', 'human']:
             challenge_metadata.update(dict(data[value]))
-
+        print(challenge_metadata)
         formatted_challenges = []
         for challenge in challenges:
             level = challenges[challenge]['level']
@@ -116,6 +116,7 @@ def get_user_challenges():
                 'value': challenges[challenge]['value'],
                 'level_total': level_total
             })
+        print(formatted_challenges)
         return jsonify({'challenges': formatted_challenges}), 200
 
     except Exception as e:
