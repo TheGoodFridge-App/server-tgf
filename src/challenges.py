@@ -31,6 +31,8 @@ def update_user_challenges():
         params={'labels[]': labels, 'secret[]': environ.get('APP_SECRET')},
     )
     challenges = list(json.loads(response.content).values())
+    if len(challenges) > 0:
+        challenges = challenges[0]
 
     #get the user's data to find overlapping challenges and update if any
     ref = db.collection('users').document(str(email)).collection('challenges').document('challenges')
@@ -94,11 +96,12 @@ def get_user_challenges():
 
         if len(challenges) < 3:
             challenges = add_challenges(str(email), data)
-
+        print(challenges)
         # Get current total based on level
         ref = db.collection(u'relationships').document('challenges')
         data = ref.get().to_dict()
         challenge_metadata = {}
+        print(data)
         for value in ['environment', 'animal', 'human']:
             challenge_metadata.update(dict(data[value]))
 
