@@ -30,7 +30,9 @@ def update_user_challenges():
     response = requests.get('https://the-good-fridge.herokuapp.com/challenges/from_labels',
         params={'labels[]': labels, 'secret[]': environ.get('APP_SECRET')},
     )
-    challenges = list(json.loads(response.content).values())[0]
+    challenges = list(json.loads(response.content).values())
+    print(challenges)
+    challenges = challenges[0]
 
     #get the user's data to find overlapping challenges and update if any
     ref = db.collection('users').document(str(email)).collection('challenges').document('challenges')
