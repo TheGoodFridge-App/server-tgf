@@ -140,15 +140,24 @@ def add_challenges(email, challenge_data):
     ref = db.collection(u'users').document(email)
     data = ref.get().to_dict()
 
-    issues = data['animal_issues'] + \
-        data['environment_issues'] + data['human_issues']
+    animal_issues = data['animal_issues']
+    environment_issues = data['environment_issues']
+    human_issues = data['human_issues']
+
+    issues = animal_issues + environment_issues + human_issues
+
     # get challenges for the issues above (could cause problems if not multi-threaded but lets see)
     response = requests.get(
         'https://the-good-fridge.herokuapp.com/challenges/from_issues',
         params={'issues[]': issues, 'secret[]': environ.get('APP_SECRET')},
     )
 
-    all_challenges = json.loads(response.content)['challenges']
+    responseJson = json.loads(response.content)
+    all_challenges = responseJson['challenges']
+    values = responseJson['values']
+    values_map = {}
+    for i, challenge in enumerate(all_challenges):
+        values_map[challenge] = values[i]
 
     challenge_arr = list(challenge_data['challenges'].keys())
     ongoing_and_completed_challenges = challenge_arr + \
@@ -165,7 +174,8 @@ def add_challenges(email, challenge_data):
 
         challenges[new_challenge] = {
             u'current': 0,
-            u'level': 1
+            u'level': 1,
+            u'value': values_map[new_challenge]
         }
         # challenges += [{}.update({
         #     new_challenge: {'current': 0, 'level': 1}
@@ -224,19 +234,23 @@ def get_challenges_from_issues():
 
         # need only issue to challenges
         data = data['issues_challenges']
+        issues_values = {}
 
         # make a dict of just arrays so its easier to get the challenges
         for doc in data:
             issue_challenges.update(data[doc])
+            issues_values[data[doc]] = doc
 
         challenges = []
+        values = []
         # get the challenges for the issues provided
         for issue in issues:
             challenges += issue_challenges[issue]
+            values += issues_values[issue] * len(issues_challenges[issue])
 
         challenges = list(set(challenges))
 
-        return {'challenges': challenges}, 200
+        return {'challenges': challenges, 'values': values}, 200
 
     except Exception as e:
         print(e)
