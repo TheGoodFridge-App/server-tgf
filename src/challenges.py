@@ -241,12 +241,16 @@ def get_challenges_from_issues():
             issue_challenges.update(data[doc])
             issues_values[data[doc]] = doc
 
+        print(issues_values)
+
         challenges = []
         values = []
         # get the challenges for the issues provided
         for issue in issues:
             challenges += issue_challenges[issue]
             values += issues_values[issue] * len(issues_challenges[issue])
+
+        print(values)
 
         challenges = list(set(challenges))
 
