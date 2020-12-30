@@ -250,7 +250,8 @@ def get_challenges_from_issues():
         # get the challenges for the issues provided
         for issue in issues:
             challenges += issue_challenges[issue]
-            values += issues_values[issue] * len(issue_challenges[issue])
+            values += [issues_values[issue]
+                       for _ in range(len(issue_challenges[issue]))]
 
         print(values)
 
