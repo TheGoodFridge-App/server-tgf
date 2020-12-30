@@ -33,7 +33,8 @@ def update_user_challenges():
                             params={'labels[]': labels,
                                     'secret[]': environ.get('APP_SECRET')},
                             )
-    challenges = list(json.loads(response.content).values())
+    responseJson = json.loads(response.content)
+    challenges = list(responseJson.values())
     if len(challenges) > 0:
         challenges = challenges[0]
     print(f'challenges: {challenges}')
@@ -239,7 +240,8 @@ def get_challenges_from_issues():
         # make a dict of just arrays so its easier to get the challenges
         for doc in data:
             issue_challenges.update(data[doc])
-            issues_values[data[doc]] = doc
+            for issue in data[doc]:
+                issues_values[issue] = doc
 
         print(issues_values)
 
