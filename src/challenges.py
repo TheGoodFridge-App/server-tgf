@@ -27,7 +27,7 @@ def update_user_challenges():
     docs = ref.stream()
     for doc in docs:
         labels.append(doc.id)
-    print(f'labels: {labels}')
+    #print(f'labels: {labels}')
     # get challenges related to the labels
     response = requests.get('https://the-good-fridge.herokuapp.com/challenges/from_labels',
                             params={'labels[]': labels,
@@ -37,13 +37,13 @@ def update_user_challenges():
     challenges = list(responseJson.values())
     if len(challenges) > 0:
         challenges = challenges[0]
-    print(f'challenges: {challenges}')
+    #print(f'challenges: {challenges}')
     # get the user's data to find overlapping challenges and update if any
     ref = db.collection('users').document(str(email)).collection(
         'challenges').document('challenges')
     user_data = ref.get().to_dict()
     user_challenges = list(user_data["challenges"].keys())
-    print(f'user challenges: {user_challenges}')
+    #print(f'user challenges: {user_challenges}')
     # get overlapping challenges so we know what to update
     overlapping_challenges = [
         challenge for challenge in challenges if challenge in user_challenges]
@@ -61,7 +61,7 @@ def update_user_challenges():
 
     leveled_up_challenges = []
     completed_challenges = []
-    print(f'overlapping challenges before: {overlapping_challenges}')
+    #print(f'overlapping challenges before: {overlapping_challenges}')
     # do the actual updating
     for challenge in overlapping_challenges:
         levels_info = challenges_info[challenge]
@@ -79,7 +79,7 @@ def update_user_challenges():
                 del user_data["challenges"][challenge]
                 completed_challenges.append(challenge)
                 user_data["history"].append(challenge)
-    print(f'overlapping challenges after: {overlapping_challenges}')
+    #print(f'overlapping challenges after: {overlapping_challenges}')
     # update firestore with updated info
     ref = db.collection('users').document(str(email)).collection(
         'challenges').document('challenges')
@@ -243,7 +243,7 @@ def get_challenges_from_issues():
             for issue in data[doc]:
                 issues_values[issue] = doc
 
-        print(issues_values)
+        # print(issues_values)
 
         challenges = []
         values = []
@@ -253,7 +253,7 @@ def get_challenges_from_issues():
             values += [issues_values[issue]
                        for _ in range(len(issue_challenges[issue]))]
 
-        print(values)
+        # print(values)
 
         challenges = list(set(challenges))
 
